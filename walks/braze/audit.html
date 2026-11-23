@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sitesee. braze.com audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Clarity+City:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: report spine — verdict, heat-mapped sitemap, ranked findings, then a grid of page cards each pairing a wireframe with its scorecard */
+:root{
+  --paper:#0c0c0b; --panel:#151513; --ink:#f1f0e8; --muted:#8f8e82; --line:#2a2a25;
+  --accent:#c8f135; --accent-soft:rgba(200,241,53,.13);
+  --good:#c8f135; --fair:#d9a84e; --bad:#ff6a8a; --none:#3a3a33;
+  --good-soft:rgba(200,241,53,.11); --fair-soft:rgba(217,168,78,.13); --bad-soft:rgba(255,106,138,.12);
+  --wire:#1f1f1c; --wire-ink:#4a4a42; --wire-img:#2e2e29;
+  --display:"Abril Fatface","Playfair Display",Georgia,serif; --body:"Clarity City",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:40px 64px;display:flex;flex-direction:column;gap:56px}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-stretch:85%;letter-spacing:-.015em;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5.5vw,64px);font-weight:800;line-height:.98}
+h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+h3{font-size:18px;font-weight:700}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-size:12px}
+p{margin:0;max-width:68ch}
+.muted{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:6px}
+
+/* verdict */
+.top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:32px;align-items:end}
+.top .intro{display:flex;flex-direction:column;gap:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:13px}
+.verdict{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.score-big{display:flex;align-items:baseline;gap:10px}
+.score-big b{font-family:var(--display);font-size:64px;font-weight:900;font-stretch:80%;line-height:1;font-variant-numeric:tabular-nums}
+.sevs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sev-n{border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.sev-n b{font-family:var(--display);font-size:26px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.sev-n span{font-size:12px}
+.s-high{background:var(--bad-soft);color:var(--bad)} .s-med{background:var(--fair-soft);color:var(--fair)} .s-low{background:var(--wire);color:var(--muted)}
+.dims{display:flex;flex-direction:column;gap:6px}
+.dim{display:grid;grid-template-columns:110px 1fr 34px;gap:10px;align-items:center;font-size:13px}
+.track{height:8px;background:var(--wire);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:4px}
+.dim .v{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.take{border-top:3px solid var(--ink);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.take p{font-size:14px;color:var(--muted)}
+
+/* heat map */
+.heat{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.hcol{display:flex;flex-direction:column;gap:5px;min-width:0}
+.hcol h3{font-size:14px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+.tile{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12.5px;padding:5px 8px;border-radius:5px;background:var(--panel);border:1px solid var(--line);color:var(--ink);text-decoration:none;min-width:0}
+.tile span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile b{font-family:var(--mono);font-weight:500;font-size:11.5px;flex:none}
+.tile.g{background:var(--good-soft);border-color:transparent} .tile.g b{color:var(--good)}
+.tile.f{background:var(--fair-soft);border-color:transparent} .tile.f b{color:var(--fair)}
+.tile.w{background:var(--bad-soft);border-color:transparent} .tile.w b{color:var(--bad)}
+.tile.n{color:var(--muted)}
+.tile:hover{outline:1px solid var(--ink)}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* findings */
+.findings{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.find{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px 20px;padding:18px 0;border-bottom:1px solid var(--line)}
+.find .num{font-family:var(--display);font-weight:800;font-size:22px;font-stretch:80%;color:var(--muted);font-variant-numeric:tabular-nums}
+.find .what{display:flex;flex-direction:column;gap:8px;min-width:0}
+.find .fix{font-size:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.find .fix b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;width:max-content}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-family:var(--mono);font-size:11px;background:var(--wire);color:var(--ink);padding:2px 7px;border-radius:4px;text-decoration:none}
+.chip:hover{background:var(--accent-soft)}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* page cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;scroll-margin-top:16px}
+.card:target{outline:2px solid var(--accent)}
+.thumb{display:flex;flex-direction:column;gap:6px}
+.thumb svg{width:120px;height:auto;display:block;border-radius:6px;border:1px solid var(--line)}
+.thumb .mono{color:var(--muted);text-align:center}
+.cbody{display:flex;flex-direction:column;gap:10px;min-width:0}
+.chead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.chead .path{font-family:var(--mono);font-size:11.5px;color:var(--muted);overflow-wrap:anywhere;text-decoration:none}
+.chead .path:hover{color:var(--accent)}
+.grade{flex:none;width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:22px;font-stretch:80%;line-height:1;font-variant-numeric:tabular-nums}
+.grade small{font-family:var(--body);font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.grade.g{background:var(--good-soft);color:var(--good)} .grade.f{background:var(--fair-soft);color:var(--fair)} .grade.w{background:var(--bad-soft);color:var(--bad)}
+.scores{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sc{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--muted)}
+.dots{display:flex;gap:2px}
+.dots i{flex:1;height:5px;border-radius:2px;background:var(--wire)}
+.dots i.on1{background:var(--bad)} .dots i.on2{background:var(--fair)} .dots i.on3{background:var(--good)}
+.works{font-size:13.5px;color:var(--ink)}
+.works::before{content:"Works: ";font-weight:700;color:var(--good)}
+.issues{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:13.5px}
+.issues li{display:grid;grid-template-columns:14px 1fr;gap:6px}
+.issues li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--bad);margin-top:6px}
+.issues li.m::before{background:var(--fair)} .issues li.l::before{background:var(--wire-ink)}
+.issues a{font-family:var(--mono);font-size:11px;text-decoration:none;margin-left:4px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--wire);color:var(--muted)}
+.tag.off{background:var(--bad-soft);color:var(--bad)}
+
+/* wire primitives */
+.w-bg{fill:var(--panel)} .w-ink{fill:var(--wire-ink)} .w-img{fill:var(--wire-img)} .w-acc{fill:var(--accent)} .w-band{fill:var(--wire)}
+.w-dark{fill:var(--ink)} .w-flag{fill:none;stroke:var(--bad);stroke-width:1.5} .w-flagdot{fill:var(--bad)} .w-empty{fill:none;stroke:var(--wire-ink);stroke-dasharray:3 2}
+
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;font-size:14px}
+.method div{display:flex;flex-direction:column;gap:6px}
+.method dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px}
+.method dt{font-weight:700}
+.method dd{margin:0;color:var(--muted)}
+@media (max-width:760px){
+  .top{grid-template-columns:1fr}
+  .find{grid-template-columns:32px minmax(0,1fr)}
+  .find .fix{grid-column:2}
+  .card{grid-template-columns:84px minmax(0,1fr);gap:12px;padding:14px}
+  .thumb svg{width:84px}
+  .scores{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+
+h1,h2,h3,.score-big b,.sev-n b,.find .num,.grade{font-weight:400;font-stretch:normal;letter-spacing:0}
+h1{font-size:clamp(52px,9vw,104px);line-height:1;padding-bottom:.08em}
+h2{font-size:clamp(28px,3.6vw,40px);line-height:1.08}
+h3{font-family:var(--body);font-weight:700;letter-spacing:0}
+.card h3{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.headline{font-family:var(--display);font-size:clamp(26px,3.4vw,38px);line-height:1.12;max-width:none;padding-bottom:.05em}
+.score-big b{font-size:72px}
+.grade{font-size:24px}
+.take{border-top-color:var(--accent)}
+.root,.verdict{border-color:var(--line)}
+.vgrid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
+.stamp{aspect-ratio:1;max-width:220px;border:4px solid var(--accent);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-8deg);color:var(--accent);box-shadow:inset 0 0 0 6px var(--paper),inset 0 0 0 8px var(--accent)}
+.stamp span{font-family:var(--display);font-size:54px;line-height:1}
+.stamp small{font-family:var(--mono);font-size:13px;margin-top:6px}
+.vtext{display:flex;flex-direction:column;gap:16px}
+.fixbox{background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.checks{border:1.5px dashed var(--bad);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.checks ul{margin:0;padding-left:18px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+@media (max-width:760px){.vgrid{grid-template-columns:1fr}.stamp{max-width:170px}}
+
+/* sass-y idea labs: shared brand furniture */
+[hidden]{display:none!important}
+.lime{color:#c8f135}
+.eyebrow{font-family:var(--mono);font-weight:400}
+.eyebrow::before{content:"\2198";display:inline-block;margin-right:.5em;color:#c8f135}
+.sfoot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #2a2a25;padding-top:16px;font-family:var(--mono);font-size:12px;color:#8f8e82}
+.sfoot b{color:#f1f0e8;font-weight:500}
+.endmark{font-family:var(--mono);font-size:13px;color:#f1f0e8;text-align:center;padding-block:8px 0}
+.endmark i{display:inline-block;width:.55em;height:1.05em;background:#c8f135;vertical-align:-2px;margin-left:3px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.endmark i{animation:none}}
+.eyebrow{text-transform:none;letter-spacing:.02em}
+
+.wnav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:12px 20px;border-bottom:1px solid #2a2a25;background:#0c0c0b;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:13px}
+.wnav a{color:#8f8e82;text-decoration:none}
+.wnav a:hover,.wnav a:focus-visible{color:#f1f0e8}
+.wnav .home{font-family:"Abril Fatface",Georgia,serif;font-size:20px;color:#f1f0e8}
+.wnav .home span{color:#c8f135}
+.wnav .tabs{display:flex;gap:16px;flex-wrap:wrap}
+.wnav .tabs a[aria-current]{color:#c8f135}
+</style>
+</head>
+<body>
+<nav class="wnav" aria-label="sitesee. walk 01"><a class="home" href="../../index.html">sitesee<span>.</span></a><span class="tabs"><span style="color:#8f8e82">Walk 01 · braze.com</span><a href="map.html">The map</a><a href="walk.html">The walk</a><a href="audit.html" aria-current="page">The audit</a></span></nav>
+
+
+<div class="wrap">
+  <div class="top">
+    <div class="intro">
+      <div class="eyebrow">sitesee<span class="lime">.</span> · Walk 01 · The audit</div>
+      <h1>braze.com<span class="lime">.</span></h1>
+      <p class="headline">Strong product story,<br><span class="lime">leaky front door.</span></p>
+      <p class="muted">An audit of 25 key pages on braze.com plus the full English sitemap, reviewed 14 October 2026. Each page is scored on five dimensions and drawn as a wireframe of its actual section order. Pink outlines mark the blocks where problems sit.</p>
+      <div class="meta"><span>25 pages scored</span><span>6 nav sections</span><span>English XML sitemap scanned</span><span>18 site-wide findings</span></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="takeaways">
+    <div class="take"><h3>The product pages do their job</h3><p>BrazeAI, Data Platform, Cross-Channel, Email and Decisioning Studio share one clear template with named customers, analyst proof and FAQs. Decisioning Studio is the best page on the site.</p></div>
+    <div class="take"><h3>The conversion path is the weak link</h3><p>Six differently worded CTAs all land on /get-started, whose served HTML has about 45 words and no visible form. Two pages quietly use better inline forms.</p></div>
+    <div class="take"><h3>Trust erodes in the details</h3><p>Brand counts range from 1,700+ to 2,700+ across pages, test pages are indexable, duplicate URLs compete, and unfinished sections ship to production.</p></div>
+  </div>
+
+  <section id="map">
+    <div class="sec-head"><div class="eyebrow">Heat map</div><h2>The sitemap, scored</h2><p class="muted">Every node from the sitemap, coloured by its audit score. Grey nodes were not audited individually. Select a node to jump to its page card.</p></div>
+    <div class="key"><span><i style="background:var(--good)"></i>Strong, 75+</span><span><i style="background:var(--fair)"></i>Fair, 55–74</span><span><i style="background:var(--bad)"></i>Weak, under 55</span><span><i style="background:var(--none)"></i>Not audited</span></div>
+    <div class="heat" id="heat"></div>
+  </section>
+
+  <section id="findings">
+    <div class="sec-head"><div class="eyebrow">Site-wide findings</div><h2>What to fix, in order</h2><p class="muted">Ranked by impact on a buyer's path to sales. Page chips show where each issue was observed.</p></div>
+    <div class="filters" id="sevFilter" role="group" aria-label="Filter findings by severity"></div>
+    <div class="findings" id="flist"></div>
+  </section>
+
+  <section id="pages">
+    <div class="sec-head"><div class="eyebrow">Page by page</div><h2>25 pages, wireframed and scored</h2><p class="muted">Each wireframe follows the page's real section order, top to bottom. Scores run 1–5 on message clarity, next-step path, proof quality, content hygiene and findability.</p></div>
+    <div class="filters" id="secFilter" role="group" aria-label="Filter pages by section"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+
+  <section id="verdict-sec" class="vsec">
+    <div class="sec-head"><div class="eyebrow">Verdict</div><h2>Does the site work?</h2></div>
+    <div class="vgrid">
+      <div class="stamp" aria-label="Verdict: Maybe"><span>Maybe</span><small>59 / 100</small></div>
+      <div class="vtext">
+        <p class="headline">Strong message.<br><span class="lime">Weak hygiene.</span></p>
+        <p>The site score is 59, below the 75 a Yes needs. Hygiene is the only lens averaging under 2.5, so it stops short of a No. The product pages make a clear, well-proven case. The site loses visitors at the step after that: six CTA labels feed a thin contact page, proof numbers disagree from page to page, and test pages and duplicate URLs sit in the index.</p>
+        <p class="muted">To move to Yes, Path and Hygiene need to average 3.5 or better. One conversion pattern, one stat source and a clean index would get most of the way there.</p>
+        <div class="fixbox"><div class="eyebrow">One concrete fix</div><p>Route all six CTA labels to two intents, talk to sales and start a trial. Rebuild /get-started with a server-rendered form within 30 days, then watch demo-request completion from the product pages.</p></div>
+        <div class="checks"><div class="eyebrow">Checks</div><ul>
+          <li>Images are wireframes drawn from served HTML, not screenshots.</li>
+          <li>Forms, job listings and the leadership grid may render in the browser. They are flagged as "not in the served page", not as missing.</li>
+          <li>No traffic, speed or accessibility tooling data was used.</li></ul></div>
+      </div>
+    </div>
+  </section>
+  <section id="method">
+    <div class="sec-head"><div class="eyebrow">Method</div><h2>How this was scored</h2></div>
+    <div class="method">
+      <div><h3>Rubric</h3><dl>
+        <dt>Message</dt><dd>Is it clear within one screen what this page offers and for whom?</dd>
+        <dt>Path</dt><dd>Is there one obvious, working next step that fits the visitor's intent?</dd>
+        <dt>Proof</dt><dd>Are claims backed by named, dated, sourced evidence?</dd>
+        <dt>Hygiene</dt><dd>Free of duplicates, placeholders, typos, broken links and stale content?</dd>
+        <dt>Findable</dt><dd>Reachable from navigation, one canonical URL, a proper H1 and metadata?</dd>
+      </dl></div>
+      <div><h3>Evidence</h3><p class="muted">Each page was read as served HTML, the same view a search crawler or text-only reader gets, along with the live navigation, footer and XML sitemap. Wireframes are drawn from that structure, not from screenshots.</p></div>
+      <div><h3>Limits</h3><p class="muted">Content that renders only in the browser (some forms, the careers listings, the leadership grid) may exist for human visitors even where flagged as missing here. Those findings are worded as "not in the served page". This review covers no traffic, speed or accessibility tooling data, and the scores reflect editorial judgement.</p></div>
+    </div>
+  </section>
+<footer class="sfoot"><span><b>sass-y</b> / idea labs · sitesee<span class="lime">.</span></span><span>braze.com</span></footer>
+<div class="endmark">sass-y idea labs<i aria-hidden="true"></i></div>
+</div>
+
+<script>
+const B="https://www.braze.com";
+const DIMS=["Message","Path","Proof","Hygiene","Findable"];
+
+/* ---------- findings ---------- */
+const F=[
+ {s:"high",t:"Six CTA labels, one thin destination",
+  d:"Contact Sales, Get Started, Get Demo, Contact Us, Get pricing and Talk to an expert all route to /get-started. In the served page, /get-started has about 45 words of copy, a logo strip and no visible form; the form appears to load only in the browser. Meanwhile Decisioning Studio and Braze for Startups embed their own inline forms, so the site runs three conversion patterns at once.",
+  r:"Settle on two intents (talk to sales, start a free trial) with fixed labels. Rebuild /get-started as a reassurance page: what happens next, response time, a server-rendered form and proof beside it. Roll out the Decisioning Studio inline-form pattern to the other high-intent product pages.",
+  p:["get-started","home","why","overview","pricing","decision","startups"]},
+ {s:"high",t:"Proof numbers contradict each other",
+  d:"The customer count reads 1,700+ (Boost Productivity), 1,900+ (Feature Flags), 2,000+ (About, body copy), 2,500+ (Why Braze), 2,600+ (Platform Overview) and 2,700+ (About, stats block). Monthly active users read 6B (Cross-Channel), 7.8B (Why Braze) and 9B (About). A buyer comparing pages sees the same company quoting different sizes.",
+  r:"Keep one dated stat module in the CMS and reference it everywhere. Retire numbers on older templates rather than letting them drift.",
+  p:["boost","flags","about","why","overview","crossch"]},
+ {s:"high",t:"Test pages are live and indexable",
+  d:"/web-test serves an H1 of \"TEST\", filler copy and a broken link to braze.com/braze.com/get-started, with robots set to index, follow. /test-retail-ecomm is also indexable. The sitemap lists more: /test-for-engineering, /web-test-2025-06-23, /matts-examples and /landing-page-translation-test.",
+  r:"Unpublish these, or set noindex and remove them from the sitemap. Add a pre-publish check that blocks indexable pages with test slugs.",
+  p:["webtest"]},
+ {s:"high",t:"Same page, two URLs",
+  d:"/product/data-activation and /product/braze-data-platform both serve the Data Platform page, each with a self-referencing canonical. The footer links one and the nav links the other. The sitemap also lists root-level twins of nested pages: /brazeai-decisioning-studio, /boost-productivity, /case-studies, /beta-terms and the two /become-a-braze-…-partner pages.",
+  r:"Pick one canonical path per page, 301 the twin, and update every internal link to match.",
+  p:["dataplat","decision","boost","customers"]},
+ {s:"high",t:"Case studies are hard to browse",
+  d:"In the served page, /customers shows the same three stories (Motorway, Klover, Uswitch) on all three carousel pages, and there is no industry filter even though the nav lists eight industries. Inside product pages, case cards repeat: Uswitch, Virgin Red, Max, RTL+, Canva and Tonies each appear twice in their grids.",
+  r:"Replace the carousel with a filterable grid (industry, use case, channel, region). De-duplicate case modules at the component level.",
+  p:["customers","brazeai","dataplat","crossch","agents","journey","email"]},
+ {s:"med",t:"Footer and header links disagree",
+  d:"The footer's Boost Productivity link points to /product/boost-productivity, which serves homepage content, while the menu correctly uses /solutions/boost-productivity. Log In goes to /developers/sign_in in the header and /sign_in in the footer. Investor Relations has two different URLs.",
+  r:"Generate header and footer from one nav source so the same label always resolves to the same URL.",
+  p:["home","boost"]},
+ {s:"med",t:"Social icon points to the wrong network",
+  d:"On every page, the footer icon labelled Discord links to instagram.com/braze. The X icon still uses the legacy twitter.com domain.",
+  r:"Fix the icon label and asset in the shared footer component.",
+  p:["home"]},
+ {s:"med",t:"Missing or misplaced H1s",
+  d:"No H1 was found on Platform Overview, How Braze Works, Pricing, Get Started or Careers. Partners styles its main heading as an H2. Braze for Startups' only H1 is the form heading at the bottom. Decisioning Studio jumps from H2 to H4.",
+  r:"Every page gets exactly one H1 in the hero that states the page's offer. Lint heading order in the CMS.",
+  p:["overview","howworks","pricing","get-started","careers","partners","startups","decision"]},
+ {s:"med",t:"Headline stats without a source",
+  d:"Retail leads with 57%, 72% and 7.9x, Financial Services with 86%, 2X and 25%, and Reduce Churn with 58%, 48% and 76%. None is attributed to a customer, dataset or date. Why Braze's stat cards give no timeframe or baseline.",
+  r:"Footnote every stat with its source and year, or tie it to a named case study.",
+  p:["retail","finserv","churn","why"]},
+ {s:"med",t:"Unfinished sections in production",
+  d:"Why Braze has an empty \"Ready to get started?\" heading. Startups lists seven FAQ questions with no answers. About shows \"Loading…\" where leadership should be. Platform Overview's Watch a Demo button jumps to an anchor that doesn't exist, and How Braze Works' has no link at all. Retail has a black placeholder image.",
+  r:"Add a pre-publish content check for empty headings, unanswered FAQs and dead anchors.",
+  p:["why","startups","about","overview","howworks","retail"]},
+ {s:"med",t:"Stale content on live journeys",
+  d:"Reduce Churn's resource cards are dated 2019 to 2022. Boost Productivity runs on an older template with a pandemic-era resilience report. The homepage still cites a 2023 IDC MarketScape. The sitemap carries webinars from 2020–21 and event videos from 2018.",
+  r:"Set a freshness rule (for example, nothing older than 24 months in a page's resource rail) and archive or noindex legacy media.",
+  p:["churn","boost","home","resources"]},
+ {s:"med",t:"Live product pages hidden from navigation",
+  d:"Feature Flags, Testing & Experimentation, Content Cards, Trust, RCS for Business, In-App Messaging and the Omnichannel page are live and indexed but missing from the menus. Feature Flags runs to about 170 words on an older template.",
+  r:"For each page, decide whether to add it to the nav, fold it into a parent page, or redirect it.",
+  p:["flags"]},
+ {s:"med",t:"Naming drift",
+  d:"The flagship report is the \"Global Customer Engagement Review\" in the menu and the \"Global Engagement Review\" in the footer. Partners is the \"Braze Partner Program\" in the title and \"Braze Alloys\" in the nav. Decisioning appears as both \"BrazeAI Decisioning\" and \"Decisioning Studio\". Support is \"Professional Services\" in the nav and \"Customer Services\" in the footer.",
+  r:"Publish a naming glossary and run it as a content lint.",
+  p:["partners","brazeai","email","home"]},
+ {s:"med",t:"Key content missing from the served page",
+  d:"In the served HTML, the Careers page has navigation and footer but no careers content, and Get Started has no form. These likely render in the browser, but crawlers and some assistive tech may miss them.",
+  r:"Server-render job listings and primary forms, or provide a static fallback.",
+  p:["careers","get-started","about"]},
+ {s:"low",t:"Tracking snippet leaks as text",
+  d:"A Google Tag Manager noscript URL renders as the first line of text on every page for non-JavaScript readers.",
+  r:"Keep the GTM noscript iframe inside body markup that text extractors ignore.",
+  p:["home"]},
+ {s:"low",t:"Copy and alt-text typos",
+  d:"\"ofcustomer\" (Partners hero), \"incustomer\" (About), \"across every channels\" (Overview) and \"usuaL\" (Retail). Alt text includes \"HIPPA\", \"gartneer\", the retired \"Sage AI\" name and a garbled Decisioning Studio description. Most logo strips have empty alt text.",
+  r:"Proofread the hero copy on these pages. Add alt text to logo assets in the media library once, not per page.",
+  p:["partners","about","overview","retail","dataplat","howworks","decision"]},
+ {s:"low",t:"The sitemap sends no priority signal",
+  d:"Every URL carries priority 0.7 and changefreq weekly, and hundreds share the same lastmod date (22 July 2026), so search engines get no hint about which pages matter or what changed.",
+  r:"Emit real lastmod dates from the CMS, and drop priority and changefreq rather than setting a flat value.",
+  p:[]},
+ {s:"low",t:"Pricing raises an unanswered question",
+  d:"Pricing explains Monthly Active Users and Action Credits but shows no figures, and the Go tier card lists a single feature. The FAQ says there is no free plan right next to a prominent free-trial button.",
+  r:"Show an entry price or range for Go, and spell out what happens when the trial ends.",
+  p:["pricing"]}
+];
+
+/* ---------- pages ---------- */
+// sc: [Message, Path, Proof, Hygiene, Findable]; w: wireframe blocks (! = problem block); iss: [text, findingIndex, sev]
+const P=[
+ {id:"home",sec:"Home",n:"Home",p:"/",nav:1,sc:[4,3,5,3,4],
+  w:["nav","heroc","lg","tabs","it","ti","it","ca","c4!","c6","cb","ft"],
+  ok:"A clear three-pillar story (Data, AI, Cross-channel) backed by named results and 2026 analyst recognition.",
+  iss:[["Two hero CTAs (Contact Sales, Start a Free Trial) feed a thin /get-started",0,"h"],["Analyst row still cites a 2023 IDC MarketScape; two links contain double slashes",10,"m"],["Footer Discord icon links to Instagram",6,"m"]]},
+ {id:"why",sec:"Why Braze",n:"Why Braze?",p:"/value-of-braze",nav:1,sc:[4,3,3,2,4],
+  w:["nav","hero","st!","ls","it","ti","it","ti","ca","em!","txt","txt","cb","ft"],
+  ok:"Proof-led: logos, testimonials and compliance badges, organised into four reasons to choose Braze.",
+  iss:[["Empty \"Ready to get started?\" heading",9,"m"],["Stat cards (40%, 300%, 56%, 30%) have no timeframe or source",8,"m"],["Six competing CTAs, including one to a 2025 BFCM article",0,"h"]]},
+ {id:"overview",sec:"Product",n:"Platform Overview",p:"/product/overview",nav:1,sc:[3,3,4,2,2],
+  w:["nav","heroc!","lg","tabs","it","ti","it","ti","st!","c3","cb","ft"],
+  ok:"Compact tour of the four platform areas with hard 2025 volume stats.",
+  iss:[["No H1; hero is a slogan, not an offer",7,"m"],["\"Watch a Demo\" jumps to an anchor that doesn't exist",9,"m"],["\"2,600+ brands\" conflicts with other pages",1,"h"],["Overlaps heavily with How Braze Works",3,"m"]]},
+ {id:"howworks",sec:"Product",n:"How Braze Works",p:"/product",nav:1,sc:[4,2,3,2,2],
+  w:["nav","hero!","it","ti","it","ti","it","ti","it","q!","q","cb","ft"],
+  ok:"Seven-stage walkthrough from data activation to insight; the clearest explanation of the platform.",
+  iss:[["No H1",7,"m"],["\"Watch a Demo\" has no link; closing CTA links back to this page",9,"m"],["Peer Insights quote is unattributed; alt text uses retired \"Sage AI\" name",15,"l"]]},
+ {id:"pricing",sec:"Product",n:"Pricing",p:"/pricing",nav:1,sc:[3,4,2,3,2],
+  w:["nav","heroc","tr!","c6","it","ti","it","fq","cb","ft"],
+  ok:"Explains the four editions and the MAU + Action Credits model, with an eight-question FAQ.",
+  iss:[["No figures; Go tier card lists one feature",17,"l"],["No H1; meta tags padded with zero-width characters",7,"m"],["No customer proof on the page",8,"m"]]},
+ {id:"brazeai",sec:"Product",n:"BrazeAI™",p:"/product/brazeai",nav:1,sc:[4,3,4,3,4],
+  w:["nav","hero","lg","c3","it","ti","it","c4!","st","c4","c3","fq","cb","ft"],
+  ok:"Strong headline and twelve recognisable logos, with each claim tied to a named case.",
+  iss:[["Uswitch case card appears twice",4,"h"],["\"Learn more\" links only jump down the page",null,"l"],["Mixes \"Decisioning\" and \"Decisioning Studio\"",12,"m"]]},
+ {id:"dataplat",sec:"Product",n:"Braze Data Platform",p:"/product/braze-data-platform",nav:1,sc:[4,3,4,3,2],
+  w:["nav","hero","c4","it","ti","it","ti","it","c4!","c4","fq","cb","ft"],
+  ok:"Clear four-part story (unify, profile, activate, distribute) with named customer results and certifications.",
+  iss:[["Also served at /product/data-activation, each with its own canonical",3,"h"],["Virgin Red case card duplicated",4,"h"],["Alt text reads \"HIPPA\"",15,"l"]]},
+ {id:"crossch",sec:"Product",n:"Cross-Channel Messaging",p:"/product/cross-channel-messaging",nav:1,sc:[4,3,4,3,4],
+  w:["nav","hero","c6","c4","it","ti","it","ti","it","ti","c4!","st","c3","fq","cb","ft"],
+  ok:"Every claim has a number and many have a named customer (Rappi, Dutch Bros, Erewhon, Tonies).",
+  iss:[["Max case card duplicated; two H3s reused",4,"h"],["Hero CTA introduces a fifth label, \"Contact Us\"",0,"h"],["\"6 billion MAU\" conflicts with 7.8B and 9B elsewhere",1,"h"]]},
+ {id:"decision",sec:"Product",n:"Decisioning Studio",p:"/product/brazeai-decisioning-studio",nav:1,sc:[5,5,4,3,3],
+  w:["nav","hero","lg","c3","c4","it","ti","it","ti","tb","c6","fq","fm"],
+  ok:"Best page on the site: a Go vs Pro comparison table, named testimonials, and an inline demo form that keeps the buyer on the page.",
+  iss:[["Twin URL at /brazeai-decisioning-studio",3,"h"],["Headings skip from H2 to H4",7,"m"],["Garbled image alt text",15,"l"]]},
+ {id:"agents",sec:"Product",n:"BrazeAI™ Agents",p:"/product/ai-agents",nav:1,sc:[4,3,3,3,4],
+  w:["nav","hero","lg","c4","it","ti","it","ti","it","c4!","c6","fq","cb","ft"],
+  ok:"Maps each agent to a concrete product (Operator, Agent Console, Decisioning Go/Pro) with recent 2026 content.",
+  iss:[["RTL+ case card duplicated",4,"h"],["Links to the root-level twin of Decisioning Studio",3,"h"],["Build-time claims (\"two days to 15 minutes\") unsourced",8,"m"]]},
+ {id:"journey",sec:"Product",n:"Journey Orchestration",p:"/product/journey-orchestration",nav:1,sc:[4,4,4,3,4],
+  w:["nav","hero","c4","q!","it","ti","it","ti","it","c3!","c3","fq","cb","ft"],
+  ok:"Offers both sales and free-trial paths up front, with seven named customer outcomes.",
+  iss:[["Gartner Peer Insights quote has no reviewer",8,"m"],["Case study grid repeated in markup",4,"h"],["Same eyebrow labels two different sections",null,"l"]]},
+ {id:"email",sec:"Product",n:"Email",p:"/product/email",nav:1,sc:[4,4,5,3,4],
+  w:["nav","hero","c4","q","it","ti","it","ti","it","c3!","c3","fq","cb","ft"],
+  ok:"The strongest proof on any channel page: Forrester Wave Q2 2026 plus three named, titled testimonials.",
+  iss:[["Canva case card duplicated",4,"h"],["Volume claims disagree: \"100B+\" vs \"hundreds of billions\"",1,"h"]]},
+ {id:"retail",sec:"Solutions",n:"Retail & eCommerce",p:"/solutions/retail-and-ecommerce",nav:1,sc:[3,3,3,2,4],
+  w:["nav","hero","lg","st!","it","ti!","it","ti","it","c3","c6","cb","ft"],
+  ok:"Retail-heavy logo wall (Gap, Etsy, J.Crew, Revolve) and a peak-season (BFCM) module.",
+  iss:[["Lead stats 57%, 72% and 7.9x are unsourced",8,"m"],["Black placeholder image next to the Sephora section",9,"m"],["H1 leads with AI rather than retail outcomes; \"usuaL\" typo",15,"l"]]},
+ {id:"finserv",sec:"Solutions",n:"Financial Services",p:"/solutions/financial-services",nav:1,sc:[4,3,3,4,4],
+  w:["nav","hero","lg","txt","st!","it","ti","it","ti","c3","c6","cb","ft"],
+  ok:"Speaks to the buyer's real worry with a dedicated security and compliance section and badges.",
+  iss:[["86%, 2X and 25% stats unsourced",8,"m"],["Mockups use a fictional \"Pyrite Financial\" brand that reads like a customer",null,"l"]]},
+ {id:"churn",sec:"Solutions",n:"Reduce Churn",p:"/solutions/reduce-churn",nav:1,sc:[3,1,3,2,3],
+  w:["nav","heroc!","lg","it","ti","it","st!","c6!","ls","ft"],
+  ok:"Three concrete customer stories (HBO Max, Wallapop, PureGym), each with a result.",
+  iss:[["No call to action in the page body",0,"h"],["Resource cards dated 2019–2022",10,"m"],["\"See all\" link has a doubled, malformed URL",5,"m"],["Unsourced 58%, 48% and 76% stats",8,"m"]]},
+ {id:"boost",sec:"Solutions",n:"Boost Productivity",p:"/solutions/boost-productivity",nav:1,sc:[3,2,2,2,2],
+  w:["nav","heroc","st","it","ti","it","txt!","ls","lg!","ft"],
+  ok:"Leads with an outcome buyers care about: spend, time and campaign results.",
+  iss:[["Footer link points to /product/boost-productivity, which serves the homepage",5,"m"],["Older template: \"1,700+ brands\" and a pandemic-era report",10,"m"],["Root-level twin at /boost-productivity",3,"h"]]},
+ {id:"startups",sec:"Solutions",n:"Braze for Startups",p:"/braze-for-startups",nav:1,sc:[4,4,4,2,2],
+  w:["nav","hero!","lg","c3","it","ti","it","ca","c6","fq!","fm"],
+  ok:"A tailored path: a \"Contact a Startup Expert\" form on the page and named founder testimonials.",
+  iss:[["Seven FAQ questions with no answers",9,"m"],["Only H1 is the form heading at the bottom",7,"m"],["Free-trial link uses /free-trial, not try.braze.com",5,"m"]]},
+ {id:"get-started",sec:"Home",n:"Get Started",p:"/get-started",nav:1,sc:[2,3,3,2,2],
+  w:["nav","heroc!","lg","em!","ft"],
+  ok:"A single destination, which makes the funnel easy to measure.",
+  iss:[["About 45 words of copy and no form in the served page",0,"h"],["Nothing explains what happens after you submit",0,"h"],["No H1",7,"m"]]},
+ {id:"partners",sec:"Partners",n:"Braze Alloys",p:"/partners",nav:1,sc:[4,4,3,2,2],
+  w:["nav","hero!","lg","txt","st","c3","ca!","cb","ft"],
+  ok:"Clear dual purpose (become a partner, find a partner) with ecosystem stats and partner awards.",
+  iss:[["Main heading is an H2 and contains the typo \"ofcustomer\"",15,"l"],["Title says \"Partner Program\", nav says \"Alloys\"",12,"m"],["A 13% churn stat has no customer attached",8,"m"]]},
+ {id:"resources",sec:"Resources",n:"Resources Hub",p:"/resources",nav:1,sc:[3,3,3,3,3],
+  w:["nav","heroc","c3","c3","c3","fm!","c3","c3","ls","cb","ft"],
+  ok:"Good taxonomy: content-type tabs plus use-case and channel tags.",
+  iss:[["Newsletter form shows \"Loading…\" in the served page",13,"m"],["Webinars tab has no content on the hub",null,"l"],["Same subtitle repeats under three sections",null,"l"]]},
+ {id:"customers",sec:"Resources",n:"Customer Stories",p:"/customers",nav:1,sc:[3,2,2,2,2],
+  w:["nav","heroc","ca!","ls","cb","ft"],
+  ok:"Use-case tags give a starting point for browsing.",
+  iss:[["Same three stories on every carousel page",4,"h"],["No industry filter despite eight industry pages",4,"h"],["Twin URL at /case-studies",3,"h"]]},
+ {id:"about",sec:"Company",n:"About Us",p:"/company",nav:1,sc:[4,3,4,2,4],
+  w:["nav","heroc","txt","txt","txt","st!","lg","tabs","it","em!","cb","ft"],
+  ok:"A warm, specific origin story with IPO and ARR milestones and a social-impact section.",
+  iss:[["\"More than 2,000\" brands in body vs \"2,700+\" in stats",1,"h"],["Leadership shows \"Loading…\"",9,"m"],["Typo \"incustomer\" in a heading",15,"l"]]},
+ {id:"careers",sec:"Company",n:"Careers",p:"/company/careers",nav:1,sc:[2,1,1,2,1],
+  w:["nav","heroc!","em!","ft"],
+  ok:"A memorable page title: \"Find your people. Make real impact.\"",
+  iss:[["No careers content or job listings in the served page",13,"m"],["Meta description is the generic site tagline",null,"l"],["No H1",7,"m"]]},
+ {id:"flags",sec:"Off-nav",n:"Feature Flags",p:"/product/feature-flags",nav:0,sc:[2,2,2,2,1],
+  w:["nav","heroc","c4","c4","lg!","cb","ft"],
+  ok:"A distinct capability that sets Braze apart from many marketing-only tools.",
+  iss:[["Not linked from any menu",11,"m"],["About 170 words; no proof or product detail",11,"m"],["\"1,900+ brands\" conflicts with other pages",1,"h"]]},
+ {id:"webtest",sec:"Off-nav",n:"Test page",p:"/web-test",nav:0,sc:[1,1,1,1,1],
+  w:["nav","em!","txt!","ft"],
+  ok:"Nothing. This page shouldn't be public.",
+  iss:[["H1 \"TEST\", filler copy, robots index, follow",2,"h"],["Broken link to braze.com/braze.com/get-started",2,"h"]]}
+];
+
+/* heat map: full IA with audited nodes */
+const HEAT=[
+ ["Home & conversion",[["Home","home"],["Get Started","get-started"],["Search"],["Free Trial ↗"],["Log In ↗"]]],
+ ["Why Braze",[["Why Braze?","why"]]],
+ ["Product",[["Platform Overview","overview"],["How Braze Works","howworks"],["Pricing","pricing"],["BrazeAI™","brazeai"],["Data Platform","dataplat"],["Cross-Channel","crossch"],["Decisioning Studio","decision"],["AI Agents","agents"],["Journey Orchestration","journey"],["Reporting & Analytics"],["Creative Studio"],["Email","email"],["Mobile App"],["Web Messaging"],["SMS / RCS"],["WhatsApp"],["LINE"],["KakaoTalk"],["Audience Sync"]]],
+ ["Solutions",[["Retail & eCommerce","retail"],["Financial Services","finserv"],["Travel & Hospitality"],["Media & Entertainment"],["Sports"],["Gaming"],["On Demand"],["QSR"],["Optimize Onboarding"],["Improve Acquisition"],["Reduce Churn","churn"],["Increase Engagement"],["Boost Productivity","boost"],["Startups","startups"],["Engineering"]]],
+ ["Partners",[["Braze Alloys","partners"],["Become a Partner"],["Marketplace ↗"],["Partner Portal ↗"]]],
+ ["Resources",[["Resources Hub","resources"],["Customer Stories","customers"],["Blog"],["Reports & Guides"],["Videos"],["Webinars & Events"],["Docs"],["Community ↗"],["Learning ↗"],["Support"]]],
+ ["Company",[["About Us","about"],["Careers","careers"],["News"],["Contact"],["Legal hub"],["Investors ↗"],["ESG ↗"]]],
+ ["Off-nav & test",[["Feature Flags","flags"],["/web-test","webtest"],["Testing & Exp."],["Content Cards"],["~30 campaign LPs"]]]
+];
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const score=p=>Math.round(p.sc.reduce((a,b)=>a+b,0)/25*100);
+const band=v=>v>=75?"g":v>=55?"f":"w";
+const bandName={g:"Strong",f:"Fair",w:"Weak"};
+const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+const sevName={high:"High",med:"Medium",low:"Low"};
+const sevCls={high:"s-high",med:"s-med",low:"s-low"};
+
+/* verdict */
+(function(){
+  const avg=Math.round(P.reduce((a,p)=>a+score(p),0)/P.length);
+  const dimAvg=DIMS.map((_,i)=>P.reduce((a,p)=>a+p.sc[i],0)/P.length);
+  const counts={high:0,med:0,low:0};F.forEach(f=>counts[f.s]++);
+  const col=v=>v>=3.75?"var(--good)":v>=2.75?"var(--fair)":"var(--bad)";
+  document.getElementById("verdict").innerHTML=`
+    <div class="eyebrow">Overall score</div>
+    <div class="score-big"><b style="color:${avg>=75?"var(--good)":avg>=55?"var(--fair)":"var(--bad)"}">${avg}</b><span class="muted">/ 100 across 25 pages</span></div>
+    <div class="dims">${DIMS.map((d,i)=>`<div class="dim"><span>${d}</span><span class="track"><i style="width:${dimAvg[i]/5*100}%;background:${col(dimAvg[i])}"></i></span><span class="v">${dimAvg[i].toFixed(1)}</span></div>`).join("")}</div>
+    <div class="sevs"><div class="sev-n s-high"><b>${counts.high}</b><span>High</span></div><div class="sev-n s-med"><b>${counts.med}</b><span>Medium</span></div><div class="sev-n s-low"><b>${counts.low}</b><span>Low</span></div></div>`;
+})();
+
+/* heat map */
+document.getElementById("heat").innerHTML=HEAT.map(([h,nodes])=>`<div class="hcol"><h3>${esc(h)}</h3>${nodes.map(([n,id])=>{
+  if(!id)return `<span class="tile n"><span>${esc(n)}</span><b>–</b></span>`;
+  const v=score(byId[id]);return `<a class="tile ${band(v)}" href="#p-${id}"><span>${esc(n)}</span><b>${v}</b></a>`;}).join("")}</div>`).join("");
+
+/* findings */
+let sevSel="all";
+function renderFindings(){
+  document.getElementById("flist").innerHTML=F.map((f,i)=>({f,i})).filter(({f})=>sevSel==="all"||f.s===sevSel).map(({f,i})=>`
+  <article class="find" id="f-${i+1}">
+    <div class="num">${String(i+1).padStart(2,"0")}</div>
+    <div class="what"><span class="pill ${sevCls[f.s]}">${sevName[f.s]}</span><h3>${esc(f.t)}</h3><p class="muted" style="font-size:14px">${esc(f.d)}</p>
+      ${f.p.length?`<div class="chips">${f.p.map(id=>`<a class="chip" href="#p-${id}">${esc(byId[id].n)}</a>`).join("")}</div>`:""}</div>
+    <div class="fix"><b>Recommendation</b><span>${esc(f.r)}</span></div>
+  </article>`).join("");
+}
+document.getElementById("sevFilter").innerHTML=[["all","All 18"],["high","High"],["med","Medium"],["low","Low"]].map(([k,l])=>`<button data-k="${k}" aria-pressed="${k==="all"}">${l}</button>`).join("");
+document.getElementById("sevFilter").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sevSel=b.dataset.k;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute("aria-pressed",x===b));renderFindings();});
+renderFindings();
+
+/* wireframes */
+const BH={nav:8,hero:36,heroc:30,lg:10,c3:24,c4:22,c6:30,it:26,ti:26,st:16,q:18,fq:28,fm:34,cb:18,ca:24,ls:16,tb:26,tr:34,em:22,tabs:28,txt:16,ft:16};
+function wire(blocks){
+  const W=120,pad=6;let y=0;const parts=[];
+  const r=(x,y,w,h,c,rx=1.5)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+  const lines=(x,y,w,n,gap=4)=>Array.from({length:n},(_,i)=>r(x,y+i*gap,i===n-1?w*.6:w,2,"w-ink",1)).join("");
+  blocks.forEach(raw=>{
+    const flag=raw.endsWith("!");const b=raw.replace("!","");const h=BH[b]||16;let g="";
+    const x0=pad,w=W-pad*2,y0=y+3,ih=h-6;
+    switch(b){
+      case"nav":g=r(0,y,W,h,"w-band",0)+r(pad,y+3,12,2.5,"w-dark")+r(W-pad-14,y+2.5,14,3.5,"w-acc",2);break;
+      case"hero":g=r(x0,y0+4,w*.42,4,"w-dark")+r(x0,y0+11,w*.38,4,"w-dark")+lines(x0,y0+19,w*.4,2)+r(x0,y0+ih-7,18,5,"w-acc",2.5)+r(x0+w*.52,y0,w*.48,ih,"w-img");break;
+      case"heroc":g=r(x0+w*.15,y0+4,w*.7,4,"w-dark")+r(x0+w*.25,y0+11,w*.5,4,"w-dark")+r(x0+w*.3,y0+18,w*.4,2,"w-ink")+r(x0+w*.5-12,y0+ih-7,24,5,"w-acc",2.5);break;
+      case"lg":for(let i=0;i<6;i++)g+=r(x0+i*(w/6)+2,y0+1,w/6-4,ih-2,"w-ink");break;
+      case"c3":case"c4":case"c6":{const n=b==="c3"?3:b==="c4"?4:3,rows=b==="c6"?2:1,gw=(w-(n-1)*3)/n,gh=(ih-(rows-1)*3)/rows;
+        for(let rr=0;rr<rows;rr++)for(let i=0;i<n;i++){const xx=x0+i*(gw+3),yy=y0+rr*(gh+3);g+=r(xx,yy,gw,gh,"w-band")+r(xx+2,yy+2,gw-4,gh*.45,"w-img")+r(xx+2,yy+gh*.6,gw*.7,2,"w-ink",1);}break;}
+      case"it":g=r(x0,y0,w*.45,ih,"w-img")+r(x0+w*.52,y0+3,w*.4,3,"w-dark")+lines(x0+w*.52,y0+9,w*.45,3);break;
+      case"ti":g=r(x0+w*.55,y0,w*.45,ih,"w-img")+r(x0,y0+3,w*.4,3,"w-dark")+lines(x0,y0+9,w*.45,3);break;
+      case"st":for(let i=0;i<3;i++)g+=r(x0+i*(w/3)+4,y0+1,w/3-14,5,"w-dark")+r(x0+i*(w/3)+4,y0+8,w/3-10,2,"w-ink",1);break;
+      case"q":g=r(x0+6,y0+1,5,5,"w-acc",1)+lines(x0+16,y0+2,w-26,3);break;
+      case"fq":for(let i=0;i<4;i++)g+=r(x0,y0+i*5.5,w,4,"w-band")+r(x0+w-5,y0+i*5.5+1,2,2,"w-ink",1);break;
+      case"fm":g=r(x0+8,y0,w-16,ih,"w-band")+r(x0+14,y0+4,w*.4,3,"w-dark")+[0,1,2].map(i=>r(x0+14,y0+10+i*5.5,w-28,3.5,"w-bg",1)).join("")+r(x0+14,y0+ih-7,20,4.5,"w-acc",2);break;
+      case"cb":g=r(0,y+2,W,h-4,"w-dark",0)+r(W/2-14,y+h/2-2.5,28,5,"w-acc",2.5);break;
+      case"ca":g=r(x0,y0+ih/2-2,3,4,"w-ink")+r(x0+w-3,y0+ih/2-2,3,4,"w-ink");for(let i=0;i<3;i++)g+=r(x0+7+i*((w-14)/3),y0,(w-14)/3-3,ih,"w-band")+lines(x0+10+i*((w-14)/3),y0+4,(w-14)/3-9,3);break;
+      case"ls":g=lines(x0,y0+2,w*.8,3,3.5);break;
+      case"tb":for(let i=0;i<4;i++)g+=r(x0,y0+i*5,w,4,i===0?"w-ink":"w-band",0.5);break;
+      case"tr":for(let i=0;i<4;i++){const gw=(w-9)/4;g+=r(x0+i*(gw+3),y0,gw,ih,"w-band")+r(x0+i*(gw+3)+2,y0+3,gw-4,3,"w-dark")+lines(x0+i*(gw+3)+2,y0+9,gw-4,i===0?1:4);}break;
+      case"em":g=`<rect x="${x0}" y="${y0}" width="${w}" height="${ih}" rx="2" class="w-empty"/>`;break;
+      case"tabs":g=[0,1,2].map(i=>r(x0+i*22,y0,19,4,i?"w-ink":"w-dark",2)).join("")+r(x0,y0+7,w,ih-7,"w-img");break;
+      case"txt":g=r(x0,y0+1,w*.5,3,"w-dark")+lines(x0,y0+6,w*.9,2);break;
+      case"ft":g=r(0,y,W,h,"w-dark",0)+lines(pad,y+4,30,2)+lines(pad+40,y+4,30,2);break;
+    }
+    if(flag)g+=`<rect x="1.5" y="${y+1}" width="${W-3}" height="${h-2}" rx="3" class="w-flag"/><circle cx="${W-6}" cy="${y+6}" r="3.2" class="w-flagdot"/>`;
+    parts.push(g);y+=h;
+  });
+  return `<svg viewBox="0 0 ${W} ${y}" role="img" aria-label="Wireframe of page sections"><rect width="${W}" height="${y}" class="w-bg"/>${parts.join("")}</svg>`;
+}
+
+/* page cards */
+const SECS=["All","Home","Why Braze","Product","Solutions","Partners","Resources","Company","Off-nav"];
+let secSel="All";
+function renderCards(){
+  document.getElementById("cards").innerHTML=P.filter(p=>secSel==="All"||p.sec===secSel).map(p=>{
+    const v=score(p),bd=band(v);const sections=p.w.filter(x=>x!=="nav"&&x!=="ft").length;
+    return `<article class="card" id="p-${p.id}">
+      <div class="thumb">${wire(p.w)}<span class="mono">${sections} sections</span></div>
+      <div class="cbody">
+        <div class="chead"><div style="min-width:0;display:flex;flex-direction:column;gap:3px"><h3>${esc(p.n)}</h3><a class="path" href="${B+p.p}" target="_blank" rel="noopener">braze.com${esc(p.p)} ↗</a></div>
+          <div class="grade ${bd}">${v}<small>${bandName[bd]}</small></div></div>
+        <div class="tags"><span class="tag">${esc(p.sec)}</span>${p.nav?"":'<span class="tag off">Not in navigation</span>'}</div>
+        <div class="scores">${DIMS.map((d,i)=>{const s=p.sc[i],cls=s>=4?"on3":s>=3?"on2":"on1";return `<div class="sc"><span>${d}</span><span class="dots" aria-label="${d} ${s} of 5">${[1,2,3,4,5].map(k=>`<i class="${k<=s?cls:""}"></i>`).join("")}</span></div>`;}).join("")}</div>
+        <p class="works">${esc(p.ok)}</p>
+        <ul class="issues">${p.iss.map(([t,fi,sv])=>`<li class="${sv==="h"?"":sv==="m"?"m":"l"}"><span>${esc(t)}${fi!=null?`<a href="#f-${fi+1}" onclick="sevSel='all';renderFindings();">#${String(fi+1).padStart(2,"0")}</a>`:""}</span></li>`).join("")}</ul>
+      </div></article>`;}).join("");
+}
+document.getElementById("secFilter").innerHTML=SECS.map(s=>`<button data-k="${s}" aria-pressed="${s==="All"}">${s}</button>`).join("");
+document.getElementById("secFilter").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;secSel=b.dataset.k;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute("aria-pressed",x===b));renderCards();});
+renderCards();
+/* heat-map links: make sure the card is visible even when a section filter is on */
+document.getElementById("heat").addEventListener("click",e=>{const a=e.target.closest("a.tile");if(!a)return;if(secSel!=="All"){secSel="All";[...document.getElementById("secFilter").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.k==="All"));renderCards();}});
+</script>
+
+</body>
+</html>

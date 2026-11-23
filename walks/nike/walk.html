@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sitesee. nike.com walk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: sass-y idea labs, sitesee. Walk 02 — the walk
+   IDEA: nike.com as a city: Home tower on a plaza, nav sections as districts
+   PICTURE: full-screen three.js city with a guided tour panel
+   COLOUR and TYPE: ink ground, soft district hues, lime only for Home and the active stop
+   LAYOUT: stage fills the viewport; tour panel left on desktop, docked bottom on phones */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--ink);color:var(--bone);font:15px/1.5 "Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#app{position:fixed;inset:var(--top,0) 0 0 0;display:grid;grid-template-columns:360px 1fr}
+#stage{position:relative;overflow:hidden}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+#panel{background:var(--panel);border-right:1px solid var(--line);padding:22px 22px 16px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.eb{font:500 13px/1.3 "DM Mono",ui-monospace,monospace;color:var(--dim);display:flex;align-items:center;gap:8px;margin:0}
+.eb svg{width:14px;height:14px;stroke:var(--lime);flex:none}
+h1{font:400 30px/1.12 "Abril Fatface",Georgia,serif;margin:0;padding-bottom:.08em;text-wrap:balance}
+h1 .l{color:var(--lime)}
+#body{margin:0;color:var(--bone)}
+#list{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+#list li{padding:5px 8px;border-radius:6px;border:1px solid var(--line);cursor:default;display:flex;justify-content:space-between;gap:8px}
+#list li:hover,#list li:focus-visible{border-color:var(--lime);outline:none}
+#list .pt{font:11px "DM Mono",monospace;color:var(--dim);word-break:break-all;text-align:right}
+.ctrl{display:flex;gap:8px;margin-top:auto;padding-top:8px}
+.ctrl button{flex:1;min-height:44px;font:500 13px "DM Mono",monospace;background:transparent;color:var(--bone);border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.ctrl button:hover,.ctrl button:focus-visible{border-color:var(--lime);outline:none}
+.ctrl #play[aria-pressed=true]{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.leg{display:flex;flex-wrap:wrap;gap:6px 12px;font:12px "DM Mono",monospace;color:var(--dim)}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.note{font:12px "DM Mono",monospace;color:var(--dim)}
+#tip{position:absolute;pointer-events:none;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:13px;max-width:260px}
+#tip .pt{display:block;font:11px "DM Mono",monospace;color:var(--dim);word-break:break-all}
+#card{position:absolute;right:16px;top:16px;background:var(--panel);border:1px solid var(--lime);border-radius:10px;padding:12px 14px;max-width:280px;font-size:14px;display:grid;gap:4px}
+#card .pt{font:11px "DM Mono",monospace;color:var(--dim);word-break:break-all}
+#card a{color:var(--lime);font:500 13px "DM Mono",monospace}
+#card button{position:absolute;right:6px;top:4px;background:none;border:0;color:var(--dim);font-size:18px;cursor:pointer;min-width:32px;min-height:32px}
+.tag{position:absolute;left:0;top:0;font:500 11px "DM Mono",monospace;color:var(--bone);background:rgba(12,12,11,.78);border-radius:4px;padding:1px 6px;pointer-events:none;white-space:nowrap}
+#foot{display:flex;justify-content:space-between;gap:8px;font:11px "DM Mono",monospace;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+#nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--dim)}
+@media(max-width:760px){#app{grid-template-columns:1fr;grid-template-rows:1fr minmax(0,46%)}#panel{order:2;border-right:0;border-top:1px solid var(--line);padding:14px 16px}h1{font-size:24px}#list{display:none}#card{left:12px;right:12px;max-width:none}}
+
+.wnav{position:relative;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:12px 20px;border-bottom:1px solid #2a2a25;background:#0c0c0b;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:13px}
+.wnav a{color:#8f8e82;text-decoration:none}
+.wnav a:hover,.wnav a:focus-visible{color:#f1f0e8}
+.wnav .home{font-family:"Abril Fatface",Georgia,serif;font-size:20px;color:#f1f0e8}
+.wnav .home span{color:#c8f135}
+.wnav .tabs{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.wnav .tabs a[aria-current]{color:#c8f135}
+.wnav .w{color:#8f8e82}
+</style></head><body><nav class="wnav" id="wnav" aria-label="sitesee. walk"><a class="home" href="../../index.html">sitesee<span>.</span></a><div class="tabs"><span class="w">Walk 02 · nike.com</span><a href="map.html">The map</a><a href="walk.html" aria-current="page">The walk</a><a href="audit.html">The audit</a></div></nav>
+<div id="app">
+<aside id="panel" aria-live="polite">
+<p class="eb"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="eb">sitesee. · Walk 02 · The walk</span></p>
+<h1 id="hd"></h1>
+<p id="body"></p>
+<div class="leg" id="leg"></div>
+<ul id="list"></ul>
+<p class="note">Heights are judgement calls about how hard the site promotes a page, not traffic data. Use ← → to step.</p>
+<div class="ctrl"><button id="prev" aria-label="Previous stop">← Prev</button><button id="play" aria-pressed="false">Play</button><button id="next" aria-label="Next stop">Next →</button></div>
+<div id="foot"><span>sass-y / idea labs · sitesee.</span><span>nike.com</span></div>
+</aside>
+<div id="stage"><div id="tip" hidden></div><div id="card" hidden></div><div id="tags"></div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+const U="https://www.nike.com";
+// [name, path, height 1-10, kind] kind: p page, c collection
+const SECTIONS=[
+{id:"bf",name:"Black Friday",css:"#e89a8a",role:"The first menu item, and the one every other menu repeats. Five sale grids sit behind it.",head:["Black Friday.","Every door leads here."],pages:[["Extra 25% Off","/w/black-friday-2phlm",10,"c"],["Black Friday Best Sellers","/w/promotion-best-sellers-cmvh",7,"c"],["Men's Black Friday","/w/mens-black-friday-2phlmznik1",5,"c"],["Women's Black Friday","/w/womens-black-friday-2phlmz5e1x6",5,"c"],["Kids' Black Friday","/w/kids-black-friday-2phlmzv4dh",4,"c"],["Promo codes","/promo-code",3,"p"]]},
+{id:"men",name:"Men",css:"#8fb8d8",role:"The deepest menu: browse, shoes, clothing, accessories and twelve sports, including ACG, Running and Locker Room.",head:["Men.","The biggest district."],pages:[["Men","/men",9,"p"],["Best Sellers","/w/mens-best-76m50znik1",7,"c"],["New Arrivals","/w/new-mens-3n82yznik1",6,"c"],["SNKRS Launch Calendar","/launch",7,"p"],["Running","/running",6,"p"],["ACG","/acg",5,"p"],["Locker Room","/LockerRoom",5,"p"],["Custom Shoes","/w/mens-nike-by-you-shoes-6ealhznik1zy7ok",4,"c"],["Basketball","/basketball",4,"p"],["Soccer","/soccer",3,"p"],["Golf","/golf",3,"p"],["Training","/training",3,"p"]]},
+{id:"women",name:"Women",css:"#d79bc6",role:"Mirrors Men, adds Shop by Color and more sports. One colour tile opens the wrong colour.",head:["Women.","Berry opens navy."],pages:[["Women","/women",9,"p"],["Best Sellers","/w/womens-best-5e1x6z76m50",6,"c"],["Shop by Color",null,5,"c"],["Leggings",null,4,"c"],["Volleyball","/w/womens-volleyball-5e1x6ztc2u",3,"c"],["Cheer","/w/cheerleading-1cyjk",3,"c"]]},
+{id:"kids",name:"Kids",css:"#e6c97a",role:"Organised by age as well as product, which suits parents. Two age bands both claim age 7.",head:["Kids.","Shop by age works."],pages:[["Kids","/kids",8,"p"],["Nike x LEGO","/w/nike-lego-collection-58jr",6,"c"],["Teens Collection","/teens",4,"p"],["Big Kids 7–15",null,4,"c"],["Little Kids 3–7",null,4,"c"],["Baby & Toddler",null,3,"c"]]},
+{id:"jordan",name:"Jordan",css:"#c49a7e",role:"A brand within the brand, with its own sport, gender and classics sections. Some labels open other collections.",head:["Jordan.","A city within the city."],pages:[["Jordan","/jordan",9,"p"],["Space Jam","/w/jordan-brand-x-space-jam-collection-9b8qk",7,"c"],["Heat Check","/w/jordan-heat-check-1n7xt",5,"c"],["AJ1",null,5,"c"]]},
+{id:"skims",name:"NikeSKIMS",css:"#b7a6e0",role:"A collaboration with its own guides and lookbook. Its only H1 names a sub-collection.",head:["NikeSKIMS.","Guides before the grid."],pages:[["NikeSKIMS","/nikeskims",8,"p"],["Collection Guide","/nikeskims-collection-guide",4,"p"],["Bra Guide","/nikeskims-bra-guide",4,"p"],["Lookbook","/nikeskims-lookbook",3,"p"]]},
+{id:"nsw",name:"Sportswear",css:"#8fd0b8",role:"A single top-level door with no menu of its own. The page's H1 is the gifting hero.",head:["Sportswear.","Its hero sells gifts."],pages:[["Sportswear","/sportswear",7,"p"],["Lifestyle","/w/lifestyle-13jrm",5,"c"]]},
+{id:"gifts",name:"Gifts",css:"#e3b08a",role:"A seasonal guide with answered FAQs. Gift cards live at a separate footer path.",head:["Gifts.","The FAQ does the work."],pages:[["Gifts","/gifting",8,"p"],["Shop Gifts","/w/gifts-3b0uf",6,"c"],["Gift Cards","/gift-cards",4,"p"]]}
+];
+const SUBS=[["about.nike.com","https://about.nike.com/en"],["news.nike.com","https://news.nike.com"],["jobs.nike.com","https://jobs.nike.com"],["investors.nike.com","https://investors.nike.com"],["purpose.nike.com","https://purpose.nike.com"],["accounts.nike.com (sign-in)","https://accounts.nike.com"]];
+const OUT=[["First Access","/6453"],["ACG Summer 2021","/acg/summer-2021"],["11 tips to run faster","/a/11-tips-to-help-you-run-faster"],["Shoe finder","/running-shoe-finder"],["Shoe finder twin","/running/shoe-finder"]];
+const STOPS=[
+{k:"all",eb:"Overview",head:["nike.com as a city.","Eight districts, one sale."],body:"Home is the lime tower. Each top-nav section is a district on the ring; taller buildings are pages the site pushes harder. Subdomains float, off-nav pages sit grey on the outskirts.",list:null},
+{k:"home",eb:"Home",head:["Home.","A shop window in twelve blocks."],body:"The homepage runs a gifting hero, product features, Trending tiles and an Inside Nike carousel. Two blocks are served twice, and the meta quotes a bigger discount than the nav.",list:[["Homepage","/"],["Bag","/cart"],["Sign In","/register"],["Membership","/membership"],["Help","/help"],["Find a Store","/retail"]]},
+...SECTIONS.map(s=>({k:s.id,eb:s.name,head:s.head,body:s.role,list:s.pages.map(p=>[p[0],p[1]])})),
+{k:"subs",eb:"Subdomain handoffs",head:["Handoffs.","The company lives elsewhere."],body:"About, news, careers, investors and purpose sit on their own hosts. Sign-in hands off to accounts.nike.com from one header link while another goes to /register. /sustainability redirects to about.nike.com.",list:SUBS},
+{k:"out",eb:"The outskirts",head:["The outskirts.","Live, indexed, unlinked."],body:"A 2021 ACG lookbook, a membership page at a bare number, a 2021 article and the shoe finder at two addresses. No menu leads to any of them.",list:OUT}
+];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const link=p=>!p?null:p.startsWith("http")?p:U+p;
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const stage=$("stage");
+$("leg").innerHTML=`<span><i style="background:#c8f135"></i>Home</span>`+SECTIONS.map(s=>`<span><i style="background:${s.css}"></i>${s.name}</span>`).join("")+`<span><i style="background:#555"></i>Off-nav</span><span><i style="border:1px dashed #9ab;background:none"></i>Subdomain</span>`;
+if(!window.THREE){$("stage").innerHTML='<div id="nogl">The 3D city needs three.js from cdnjs, which did not load. The tour text still works.</div>';}
+let scene,camera,renderer,controls,ray,mouse,halo;const objs=[],tags=[];
+const groups={home:[],subs:[],out:[]};SECTIONS.forEach(s=>groups[s.id]=[]);
+if(window.THREE){
+scene=new THREE.Scene();scene.background=new THREE.Color(0x0c0c0b);scene.fog=new THREE.Fog(0x0c0c0b,160,320);
+camera=new THREE.PerspectiveCamera(45,1,0.5,800);
+renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio));stage.prepend(renderer.domElement);
+controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=1.45;controls.minDistance=20;controls.maxDistance=300;
+scene.add(new THREE.HemisphereLight(0xf1f0e8,0x151513,.75));const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(60,120,40);scene.add(dl);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(150,64),new THREE.MeshLambertMaterial({color:0x121210}));ground.rotation.x=-Math.PI/2;scene.add(ground);
+const plaza=new THREE.Mesh(new THREE.CylinderGeometry(14,14,.6,48),new THREE.MeshLambertMaterial({color:0x22221d}));plaza.position.y=.3;scene.add(plaza);
+const mat=c=>new THREE.MeshLambertMaterial({color:c,transparent:true,opacity:1});
+function add(mesh,rec,grp){mesh.userData=rec;scene.add(mesh);objs.push(mesh);groups[grp].push(mesh);return mesh}
+function tag(text,pos){const el=document.createElement("div");el.className="tag";el.textContent=text;$("tags").appendChild(el);tags.push({el,pos})}
+// home tower
+const ht=add(new THREE.Mesh(new THREE.BoxGeometry(6,30,6),mat(0xc8f135)),{name:"Homepage",path:"/",kind:"Home"},"home");ht.position.y=15.6;
+halo=new THREE.Mesh(new THREE.TorusGeometry(5.5,.25,8,48),new THREE.MeshBasicMaterial({color:0xc8f135}));halo.rotation.x=Math.PI/2;halo.position.y=33;scene.add(halo);groups.home.push(halo);
+tag("Home",new THREE.Vector3(0,36,0));
+[["Bag","/cart"],["Sign In","/register"],["Membership","/membership"],["Help","/help"],["Find a Store","/retail"]].forEach((u,i)=>{const a=i/5*Math.PI*2,m=add(new THREE.Mesh(new THREE.BoxGeometry(2.2,4,2.2),mat(0xd9e89a)),{name:u[0],path:u[1],kind:"Header utility"},"home");m.position.set(Math.cos(a)*10.5,2.6,Math.sin(a)*10.5)});
+// districts
+const R=62;
+SECTIONS.forEach((s,i)=>{
+  const a=i/SECTIONS.length*Math.PI*2-Math.PI/2,cx=Math.cos(a)*R,cz=Math.sin(a)*R;s.c=new THREE.Vector3(cx,0,cz);
+  const road=new THREE.Mesh(new THREE.PlaneGeometry(2.4,R-26),new THREE.MeshLambertMaterial({color:0x2a2a25}));road.rotation.x=-Math.PI/2;road.rotation.z=-a+Math.PI/2;road.position.set(Math.cos(a)*(R/2+1),.05,Math.sin(a)*(R/2+1));scene.add(road);
+  const pad=new THREE.Mesh(new THREE.CylinderGeometry(15,15,.4,40),new THREE.MeshLambertMaterial({color:0x1a1a17}));pad.position.set(cx,.2,cz);scene.add(pad);groups[s.id].push(pad);
+  const col=new THREE.Color(s.css);
+  s.pages.forEach((p,j)=>{
+    const n=s.pages.length,ring=j===0?0:(j<=6?7:12),idx=j===0?0:(j<=6?j-1:j-7),cnt=j===0?1:(j<=6?Math.min(6,n-1):n-7);
+    const aa=idx/Math.max(cnt,1)*Math.PI*2+a,x=cx+Math.cos(aa)*ring,z=cz+Math.sin(aa)*ring,h=p[2]*2.2;
+    if(p[3]==="c"){const fl=Math.max(2,Math.round(p[2]/2));for(let f=0;f<fl;f++){const m=add(new THREE.Mesh(new THREE.BoxGeometry(3.4-f*.15,h/fl-.35,3.4-f*.15),mat(col.clone().offsetHSL(0,0,f%2?.05:0))),{name:p[0],path:p[1],kind:"Collection · "+s.name},s.id);m.position.set(x,.4+(h/fl)*f+(h/fl)/2,z)}}
+    else{const m=add(new THREE.Mesh(new THREE.BoxGeometry(j===0?5:3.4,h,j===0?5:3.4),mat(col)),{name:p[0],path:p[1],kind:"Page · "+s.name},s.id);m.position.set(x,.4+h/2,z)}
+  });
+  tag(s.name,new THREE.Vector3(cx,s.pages[0][2]*2.2+4,cz));
+});
+// subdomains
+SUBS.forEach((sd,i)=>{const a=i/SUBS.length*Math.PI*2+.3,x=Math.cos(a)*30,z=Math.sin(a)*30,y=26+(i%2)*5;
+  const m=add(new THREE.Mesh(new THREE.BoxGeometry(4,3,4),new THREE.MeshLambertMaterial({color:0x9ab4c8,transparent:true,opacity:.45})),{name:sd[0],path:sd[1],kind:"Subdomain"},"subs");m.position.set(x,y,z);
+  const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x,y-1.5,z),new THREE.Vector3(0,30,0)]);const ln=new THREE.Line(g,new THREE.LineDashedMaterial({color:0x6f8798,dashSize:1,gapSize:1,transparent:true}));ln.computeLineDistances();scene.add(ln);groups.subs.push(ln)});
+// outskirts
+OUT.forEach((o,i)=>{const a=i/OUT.length*Math.PI*2+.6,m=add(new THREE.Mesh(new THREE.BoxGeometry(3,4+(i%3)*2,3),mat(0x55554d)),{name:o[0],path:o[1],kind:"Off-nav"},"out");m.position.set(Math.cos(a)*100,m.geometry.parameters.height/2,Math.sin(a)*100)});
+tag("Outskirts",new THREE.Vector3(100*Math.cos(.6),10,100*Math.sin(.6)));
+ray=new THREE.Raycaster();mouse=new THREE.Vector2();
+}
+// tour
+let cur=0,play=false,timer=null,tween=null,hoverKey=null;
+function view(k){
+  if(k==="all")return{pos:[0,150,165],t:[0,0,0]};
+  if(k==="home")return{pos:[26,40,46],t:[0,14,0]};
+  if(k==="subs")return{pos:[0,70,80],t:[0,26,0]};
+  if(k==="out")return{pos:[0,210,40],t:[0,0,0]};
+  const s=SECTIONS.find(x=>x.id===k),d=s.c.clone().normalize();return{pos:[s.c.x+d.x*50+d.z*22,46,s.c.z+d.z*50-d.x*22],t:[s.c.x,6,s.c.z]};
+}
+function fade(k){if(!window.THREE)return;
+  Object.keys(groups).forEach(g=>groups[g].forEach(m=>{if(m.material){const base=m.userData&&m.userData.kind==="Subdomain"?.45:1;m.material.opacity=(k==="all"||g===k)?base:.12}}));}
+function go(i){
+  cur=(i+STOPS.length)%STOPS.length;const s=STOPS[cur];
+  $("eb").textContent=`Stop ${cur+1} of ${STOPS.length} · ${s.eb}`;
+  $("hd").innerHTML=`${esc(s.head[0])} <span class="l">${esc(s.head[1])}</span>`;
+  $("body").textContent=s.body;
+  $("list").innerHTML=(s.list||[]).map(([n,p])=>`<li tabindex="0" data-p="${esc(p||"")}" data-n="${esc(n)}"><span>${esc(n)}</span><span class="pt">${esc(p||"menu label")}</span></li>`).join("");
+  fade(s.k);
+  if(!window.THREE)return;
+  const v=view(s.k),to={pos:new THREE.Vector3(...v.pos),t:new THREE.Vector3(...v.t)};
+  if(reduce){camera.position.copy(to.pos);controls.target.copy(to.t);tween=null}
+  else tween={t0:performance.now(),dur:1600,from:{pos:camera.position.clone(),t:controls.target.clone()},to};
+}
+function setHover(name){objs.forEach(m=>{if(m.material&&m.material.emissive)m.material.emissive.setHex(name&&m.userData.name===name?0x3a4a0a:0)})}
+$("list").addEventListener("mouseover",e=>{const li=e.target.closest("li");setHover(li?li.dataset.n:null)});
+$("list").addEventListener("focusin",e=>{const li=e.target.closest("li");setHover(li?li.dataset.n:null)});
+$("list").addEventListener("mouseleave",()=>setHover(null));
+$("prev").onclick=()=>go(cur-1);$("next").onclick=()=>go(cur+1);
+$("play").onclick=()=>{play=!play;$("play").setAttribute("aria-pressed",play);$("play").textContent=play?"Pause":"Play";clearInterval(timer);if(play)timer=setInterval(()=>go(cur+1),6500)};
+addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
+if(window.THREE){
+  const pick=e=>{const r=renderer.domElement.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);const h=ray.intersectObjects(objs)[0];return h&&h.object.userData};
+  renderer.domElement.addEventListener("pointermove",e=>{const d=pick(e),tip=$("tip");if(!d){tip.hidden=true;setHover(null);return}setHover(d.name);const r=stage.getBoundingClientRect();tip.hidden=false;tip.innerHTML=`${esc(d.name)}<span class="pt">${esc(d.path||"menu label, no link")}</span>`;tip.style.left=Math.min(e.clientX-r.left+14,r.width-270)+"px";tip.style.top=(e.clientY-r.top+14)+"px"});
+  renderer.domElement.addEventListener("pointerleave",()=>{$("tip").hidden=true});
+  let down=null;renderer.domElement.addEventListener("pointerdown",e=>down=[e.clientX,e.clientY]);
+  renderer.domElement.addEventListener("pointerup",e=>{if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>5)return;const d=pick(e),c=$("card");if(!d){c.hidden=true;return}c.hidden=false;const L=link(d.path);c.innerHTML=`<button aria-label="Close">×</button><span class="eb" style="font-size:11px">${esc(d.kind)}</span><b>${esc(d.name)}</b><span class="pt">${esc(d.path||"menu label, no link")}</span>${L?`<a href="${L}" target="_blank" rel="noopener">Open the live page ↗</a>`:""}`;c.querySelector("button").onclick=()=>c.hidden=true});
+  const tmp=new THREE.Vector3(),ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  function frame(now){
+    if(tween){const k=Math.min(1,(now-tween.t0)/tween.dur),e=ease(k);camera.position.lerpVectors(tween.from.pos,tween.to.pos,e);controls.target.lerpVectors(tween.from.t,tween.to.t,e);if(k>=1)tween=null}
+    controls.update();if(!reduce){halo.position.y=33+Math.sin(now/600)*.6;halo.rotation.z=now/1500}
+    renderer.render(scene,camera);
+    const w=renderer.domElement.clientWidth,h=renderer.domElement.clientHeight;
+    tags.forEach(t=>{tmp.copy(t.pos).project(camera);const vis=tmp.z<1&&Math.abs(tmp.x)<1.05&&Math.abs(tmp.y)<1.05;t.el.style.display=vis?"":"none";if(vis)t.el.style.transform=`translate(${(tmp.x*.5+.5)*w}px,${(-tmp.y*.5+.5)*h}px) translate(-50%,-100%)`});
+    requestAnimationFrame(frame);
+  }
+  const resize=()=>{const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/Math.max(h,1);camera.updateProjectionMatrix()};
+  const ro=new ResizeObserver(resize);ro.observe(stage);resize();
+  camera.position.set(0,150,165);controls.target.set(0,0,0);
+  requestAnimationFrame(frame);
+}
+go(0);
+}
+{const b=document.getElementById('wnav');const f=()=>document.documentElement.style.setProperty('--top',b.offsetHeight+'px');f();new ResizeObserver(f).observe(b);}
+</script>
+</body></html>

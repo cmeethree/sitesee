@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sitesee. nike.com audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: sass-y idea labs, sitesee. Walk 02 — fair, specific, unemotional
+   IDEA: a walking survey of a big store, scored page by page
+   PICTURE: heat map of the IA, then a wall of wireframe page cards
+   COLOUR and TYPE: ink ground, bone text, lime accent, pink flags; Abril Fatface + system sans + DM Mono
+   LAYOUT: one long column of bands up to 1240px, cards in a responsive grid */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;--amber:#c9a55a;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.55 "Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
+.band{padding:clamp(28px,4vw,64px) 0;border-top:1px solid var(--line)}
+.eb{font:500 13px/1.3 "DM Mono",ui-monospace,monospace;color:var(--dim);display:flex;align-items:center;gap:8px;margin:0 0 14px}
+.eb svg{flex:none;width:14px;height:14px;stroke:var(--lime)}
+h1,h2,h3,.big{font-family:"Abril Fatface",Georgia,serif;font-weight:400;line-height:1.12;text-wrap:balance;margin:0;padding-bottom:.06em}
+h1{font-size:clamp(46px,8vw,96px)}
+h2{font-size:clamp(30px,4.4vw,48px);margin-bottom:18px}
+h3{font-size:22px}
+.l{color:var(--lime)}.pk{color:var(--pink)}
+.mono{font-family:"DM Mono",ui-monospace,monospace;font-size:13px;color:var(--dim)}
+.scope{margin-top:14px}
+.take{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px;margin-top:28px}
+.take div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.take b{display:block;font:500 13px "DM Mono",monospace;color:var(--dim);margin-bottom:6px;font-weight:500}
+.lens{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin-top:22px}
+.lens>div{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.lens .big{font-size:34px}
+.heat{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px}
+.hs{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.hs h4{margin:0 0 8px;font:500 13px "DM Mono",monospace;color:var(--dim)}
+.tiles{display:flex;flex-wrap:wrap;gap:6px}
+.tile{font-size:13px;padding:5px 8px;border-radius:6px;text-decoration:none;line-height:1.25;border:1px solid transparent}
+.t-s{background:var(--lime);color:var(--ink)}.t-f{background:var(--amber);color:var(--ink)}.t-w{background:var(--pink);color:var(--ink)}.t-n{background:#24241f;color:var(--dim)}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 16px}.leg span{display:flex;gap:6px;align-items:center}.leg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.bar button{font:500 13px "DM Mono",monospace;background:transparent;color:var(--bone);border:1px solid var(--line);border-radius:999px;padding:0 14px;min-height:44px;cursor:pointer}
+.bar button[aria-pressed=true]{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.bar button:focus-visible,.tile:focus-visible,.chip:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.fl{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.fi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:44px 1fr;gap:4px 14px}
+.fi .num{font-family:"Abril Fatface",serif;font-size:30px;line-height:1;color:var(--dim)}
+.fi h3{font-size:21px}
+.sev{font:500 12px "DM Mono",monospace;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:middle}
+.sev-high{background:var(--pink);color:var(--ink)}.sev-med{background:var(--amber);color:var(--ink)}.sev-low{border:1px solid var(--dim);color:var(--dim)}
+.fi p{margin:6px 0 0}.fi .fix{color:var(--bone)}.fi .fix b{color:var(--lime);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font:12px "DM Mono",monospace;text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--dim)}
+.chip:hover{color:var(--bone);border-color:var(--dim)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:start}
+.card .wf{width:120px}.card .wf svg{width:120px;height:auto;display:block;border-radius:6px}
+.card .cap{font:11px "DM Mono",monospace;color:var(--dim);margin-top:6px}
+.card h3{font-size:22px;margin:4px 0 8px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.dots{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.dots .row{display:flex;gap:4px}.dots i{width:10px;height:10px;border-radius:50%;display:block}
+.dots small{font:11px "DM Mono",monospace;color:var(--dim);text-align:right}
+.pscore{font-family:"Abril Fatface",serif;font-size:26px;line-height:1}
+.path{font:12px "DM Mono",monospace;color:var(--dim);word-break:break-all}
+.ok{margin:8px 0;font-size:15px}.ok b{color:var(--lime);font-weight:500}
+.iss{list-style:none;margin:0;padding:0;font-size:14px;display:grid;gap:5px}
+.iss li{display:flex;gap:8px;align-items:baseline}.iss .d{width:8px;height:8px;border-radius:50%;flex:none;transform:translateY(-1px)}
+.iss a{font:11px "DM Mono",monospace;color:var(--dim)}
+.verdict{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:28px;align-items:start}
+.stamp{border:4px solid var(--pink);color:var(--pink);border-radius:14px;padding:18px;text-align:center;transform:rotate(-4deg)}
+.stamp .big{font-size:84px;line-height:1}
+.stamp.yes{border-color:var(--lime);color:var(--lime)}.stamp.maybe{border-color:var(--amber);color:var(--amber)}
+.fixbox{border:1px solid var(--lime);border-radius:10px;padding:16px;margin-top:16px}
+.fixbox b{font:500 13px "DM Mono",monospace;color:var(--lime);display:block;margin-bottom:6px}
+.open{border:1.5px dashed var(--pink);border-radius:10px;padding:14px 16px;margin-top:16px;font-size:15px}
+.open b{font:500 13px "DM Mono",monospace;color:var(--pink);display:block;margin-bottom:4px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+th{font:500 13px "DM Mono",monospace;color:var(--dim)}
+.src li{margin:4px 0;font:13px "DM Mono",monospace;color:var(--dim);word-break:break-all}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 40px;border-top:1px solid var(--line)}
+.end{font:500 15px "DM Mono",monospace;margin:30px 0 8px}
+.cur{display:inline-block;width:.6em;height:1.1em;background:var(--lime);vertical-align:-3px;margin-left:4px;animation:bl 1.1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.cur{animation:none}}
+.w-bg{fill:#151513}.w-band{fill:#2a2a25}.w-ink,.w-img{fill:#8f8e82;opacity:.35}.w-img{opacity:.22}.w-dark{fill:#f1f0e8}.w-acc{fill:#c8f135}
+.w-flag{fill:none;stroke:#ff6a8a;stroke-width:1.4}.w-flagdot{fill:#ff6a8a}.w-empty{fill:none;stroke:#8f8e82;stroke-dasharray:3 2}
+@media(max-width:600px){.card{grid-template-columns:1fr}.card .wf{width:100px}.card .wf svg{width:100px}.verdict{grid-template-columns:1fr}.stamp{max-width:240px}table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--dim);font:12px "DM Mono",monospace}}
+
+.wnav{position:relative;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:12px 20px;border-bottom:1px solid #2a2a25;background:#0c0c0b;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:13px}
+.wnav a{color:#8f8e82;text-decoration:none}
+.wnav a:hover,.wnav a:focus-visible{color:#f1f0e8}
+.wnav .home{font-family:"Abril Fatface",Georgia,serif;font-size:20px;color:#f1f0e8}
+.wnav .home span{color:#c8f135}
+.wnav .tabs{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.wnav .tabs a[aria-current]{color:#c8f135}
+.wnav .w{color:#8f8e82}
+</style></head><body><nav class="wnav" id="wnav" aria-label="sitesee. walk"><a class="home" href="../../index.html">sitesee<span>.</span></a><div class="tabs"><span class="w">Walk 02 · nike.com</span><a href="map.html">The map</a><a href="walk.html">The walk</a><a href="audit.html" aria-current="page">The audit</a></div></nav>
+<svg width="0" height="0" style="position:absolute"><symbol id="arw" viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+<div class="wrap">
+<header class="band" style="border-top:0">
+<p class="eb"><svg><use href="#arw"/></svg>sitesee. · Walk 02 · The audit</p>
+<h1>nike.com<span class="l">.</span></h1>
+<p class="mono scope" id="scope"></p>
+<h2 style="margin-top:34px" id="headline"></h2>
+<div class="take" id="take"></div>
+<div class="lens" id="lens"></div>
+</header>
+
+<section class="band" id="heat-sec">
+<p class="eb"><svg><use href="#arw"/></svg>The heat map</p>
+<h2>Every node, <span class="l">by score.</span></h2>
+<div class="leg mono"><span><i style="background:var(--lime)"></i>Strong 75+</span><span><i style="background:var(--amber)"></i>Fair 55–74</span><span><i style="background:var(--pink)"></i>Weak under 55</span><span><i style="background:#24241f;border:1px solid var(--line)"></i>Not audited</span></div>
+<div class="heat" id="heat"></div>
+</section>
+
+<section class="band" id="findings">
+<p class="eb"><svg><use href="#arw"/></svg>Findings</p>
+<h2>What to fix, <span class="l">ranked.</span></h2>
+<div class="bar" id="fbar" role="group" aria-label="Filter findings by severity"></div>
+<ol class="fl" id="flist"></ol>
+</section>
+
+<section class="band" id="pages">
+<p class="eb"><svg><use href="#arw"/></svg>Page cards</p>
+<h2>Page by page, <span class="l">wireframed.</span></h2>
+<p class="mono" style="margin-top:-6px">All images are wireframes drawn from the served HTML section order. No screenshots were taken. Pink outline = flagged block.</p>
+<div class="bar" id="pbar" role="group" aria-label="Filter pages by section"></div>
+<div class="cards" id="cards"></div>
+</section>
+
+<section class="band" id="verdict">
+<p class="eb"><svg><use href="#arw"/></svg>Verdict · Does the site work?</p>
+<div class="verdict">
+<div class="stamp" id="stamp"></div>
+<div>
+<h2 id="vhead"></h2>
+<p id="why"></p>
+<div class="fixbox"><b>One concrete fix</b><span id="fix"></span></div>
+<div class="open" id="checks"></div>
+</div></div>
+</section>
+
+<section class="band" id="method">
+<p class="eb"><svg><use href="#arw"/></svg>Method</p>
+<h2>How it was <span class="l">scored.</span></h2>
+<table class="stack"><thead><tr><th>Lens</th><th>Question</th><th>1</th><th>3</th><th>5</th></tr></thead><tbody>
+<tr><td>Message</td><td>Is it clear in one screen what this page offers and for whom?</td><td>Slogan only, no offer</td><td>Offer clear, audience vague</td><td>Offer and audience clear at a glance</td></tr>
+<tr><td>Path</td><td>Is there one obvious, working next step that fits intent?</td><td>No next step, or a dead one</td><td>Several competing CTAs</td><td>One clear step, ideally done on the page</td></tr>
+<tr><td>Proof</td><td>Are claims backed by named, dated, sourced evidence?</td><td>Unsourced claims or none</td><td>Some badges, some unsourced claims</td><td>Named, dated, sourced evidence</td></tr>
+<tr><td>Hygiene</td><td>Free of duplicates, placeholders, typos, broken links, stale content?</td><td>Test or stale content</td><td>A few slips</td><td>Clean</td></tr>
+<tr><td>Findable</td><td>In the nav, at one canonical URL, with one H1 and real metadata?</td><td>Hidden, or twinned and no H1</td><td>One of these off</td><td>All in place</td></tr>
+</tbody></table>
+<p>Page score = lens sum ÷ 25 × 100. Site score = mean of page scores. Stamp: Yes at 75+ with no lens mean under 3.0; No under 50 or with two lens means under 2.5; Maybe otherwise.</p>
+<p><b class="l" style="font-weight:500">Evidence.</b> Served HTML of 29 US-English pages, the header and mega-menu, the footer, robots.txt and the sitemap indexes (64 locale sitemaps per index), fetched 23 November 2026, four days before Black Friday.</p>
+<div class="open"><b>Limits</b>Not in the served page does not mean missing: ratings, release dates, finders and forms likely render in the browser, which this walk did not run, so Proof and Path may read low on those pages. No traffic, speed or accessibility tooling data. Duplicated blocks are probably desktop and mobile variants. Store results depend on the fetcher's location. Scores are editorial judgement on the rubric above.</div>
+</section>
+
+<section class="band">
+<p class="eb"><svg><use href="#arw"/></svg>Sources</p>
+<ul class="src" id="src"></ul>
+<p class="end">sass-y idea labs<span class="cur" aria-hidden="true"></span></p>
+</section>
+<footer class="mono"><span>sass-y / idea labs · sitesee.</span><span>nike.com</span></footer>
+</div>
+<script>
+{
+const U="https://www.nike.com";
+const P=[
+{id:"home",sec:"Home",n:"Homepage",p:"/",nav:"Home",sc:[4,4,2,2,3],h1:"Big window, clear shop paths.",h2:"Two Black Friday numbers.",tag:"Strong shop window",w:["nav","hero","ca","it","it","c4","it","it","it","ca!","c6!","ca","c6!","ft"],ok:"Every hero block ends in one Shop or Explore link to a live category.",iss:[["Meta says up to 50% off; nav says Extra 25%","promo","h"],["Two different sign-in URLs in the header","signin","h"],["TRENDING and Kobe blocks served twice","stray","l"],["Running images carry NikeSKIMS alt text","alt","l"]]},
+{id:"bf",sec:"Promo",n:"Black Friday",p:"/w/black-friday-2phlm",nav:"In nav",sc:[3,4,3,2,4],h1:"Offer in the H1.",h2:"Three versions of the deal.",tag:"Sale grid, mixed maths",w:["nav","txt!","tabs!","c4","c4","c4","ft"],ok:"Offer and code sit in the H1, with 7651 styles and filters right below.",iss:[["H1 says Extra 25%; meta says up to 50%","promo","h"],["No end date shown on the page","promo","h"],["Every filter count reads (0)","grid","m"]]},
+{id:"men",sec:"Shop",n:"Men",p:"/men",nav:"In nav",sc:[4,4,1,3,4],h1:"Clean H1, clear tabs.",h2:"No proof in sight.",tag:"Solid category hub",w:["nav","tabs","ca","ca","ca!","it","c4","it","c4","c3","ls!","ft"],ok:"Single H1, self-canonical and a tidy subsection tab row.",iss:[["\"Latest Drops\" links to two different URLs","label","m"],["No ratings, reviews or sourced claims","proof","m"],["Shop by Sport and link lists served twice","stray","l"]]},
+{id:"women",sec:"Shop",n:"Women",p:"/women",nav:"In nav",sc:[4,4,1,3,4],h1:"Rich editorial mix.",h2:"Berry links to navy.",tag:"Solid category hub",w:["nav","ca","it","it","it","it","it!","ca!","c3","c4","it","it","c4","c3","ls","ft"],ok:"Shop By Color offers a fresh way in beyond product type.",iss:[["\"Very Berry\" tile opens a navy slug","label","m"],["No ratings, reviews or testimonials","proof","m"],["Holiday N7 block served twice","stray","l"]]},
+{id:"kids",sec:"Shop",n:"Kids",p:"/kids",nav:"In nav",sc:[3,3,2,2,3],h1:"Shop by age works.",h2:"Title says Nike.com twice.",tag:"Useful, untidy",w:["nav","ca","it","c4!","c3","c6","c3","c6!","ls","ft"],ok:"Shop By Age matches how parents actually shop.",iss:[["Title repeats \"Nike.com\" with a stray space","typo","m"],["Little Kids 3–7 and Big Kids 7–15 overlap at 7","typo","m"],["LEGO story links to an Air Works slug","newsd","m"],["Meta promises free delivery and returns, no terms","ship","m"]]},
+{id:"jordan",sec:"Shop",n:"Jordan",p:"/jordan",nav:"In nav",sc:[4,4,2,3,4],h1:"Brand world, done well.",h2:"Labels drift from links.",tag:"Strong brand hub",w:["nav","hero","ca","it","ca","it","c3","c6!","it","c3","ca","ft"],ok:"Shop by Sport and Shop by Gender split a big catalogue cleanly.",iss:[["\"JORDAN RETRO\" opens the Heat Check collection","label","m"],["Most body blocks served twice","stray","l"]]},
+{id:"skims",sec:"Shop",n:"NikeSKIMS",p:"/nikeskims",nav:"In nav",sc:[4,4,1,3,3],h1:"Clear collab story.",h2:"The H1 is a sub-collection.",tag:"Good launchpad",w:["nav","hero!","c3","ca","ca","ca","cb","ft"],ok:"Collection Guide, Bra Guide and Lookbook pills answer fit questions early.",iss:[["Only H1 is \"RETRO SPORT COLLECTION\"","h1","m"],["Title ends \"Body Obsessed..\" with two periods","typo","m"],["\"Stay in the Know\" shows no sign-up fields","served","m"],["No ratings or reviews","proof","m"]]},
+{id:"nsw",sec:"Shop",n:"Sportswear",p:"/sportswear",nav:"In nav",sc:[2,4,2,2,2],h1:"Deep catalogue.",h2:"The hero sells gifts.",tag:"Identity lost",w:["nav","hero!","ls","ca","ca","ca","c6","c3","ls","ca","c6!","ls","txt","ft"],ok:"NSW Collections and Best Reads give real depth for browsers.",iss:[["H1 is the gifting hero, not Sportswear","h1","m"],["Best Reads cards also use H1 tags","h1","m"],["Hero alt text shows a literal <br>","alt","l"]]},
+{id:"gifting",sec:"Shop",n:"Gifts",p:"/gifting",nav:"In nav",sc:[4,4,2,3,4],h1:"A gift guide with answers.",h2:"Shipping claim splits in two.",tag:"Strong seasonal hub",w:["nav","hero","c3","ca","c4","it","ca","fq","ca","ft"],ok:"Five answered FAQs and a gift-card fallback cover the undecided.",iss:[["Meta says free delivery; banner says $50+","ship","m"],["\"Shop by Color\" opens Matching Sets","label","m"]]},
+{id:"mbest",sec:"Shop",n:"Men's best sellers",p:"/w/mens-best-76m50znik1",nav:"In nav",sc:[4,4,3,2,4],h1:"Best sellers, badged.",h2:"Women's styles in men's.",tag:"Grid with glitches",w:["nav","txt","tabs!","c4","c4!","c4","ft"],ok:"209 styles with Best Seller badges and a Pick Up Today toggle.",iss:[["Code EARLYBF here, BFRIDAY elsewhere","promo","h"],["Women's Air Jordan styles listed as men's","grid","m"],["Eight cards appear twice","grid","m"],["og:image is a 192px app icon","meta","l"]]},
+{id:"pdp",sec:"Product",n:"Air Force 1 '07 (product page)",p:"/t/air-force-1-07-mens-shoes-jBrhbr/CW2288-111",nav:"Via grids",sc:[5,5,4,3,3],h1:"The best page on the site.",h2:"Stars not served.",tag:"Strong product page",w:["nav","hero","tabs","fm","txt","ls","st!","c3","ca","ft"],ok:"Fit advice, 22 sizes, 5628 reviews and one Add to Bag in one view.",iss:[["Canonical slug differs from the served URL","twin","h"],["Star score and review list absent from served page","served","m"],["Description served twice","stray","l"]]},
+{id:"byyou",sec:"Product",n:"Air Max 1000 By You",p:"/u/custom-airmax-1000-by-you-10002454",nav:"Home hero",sc:[4,3,1,3,4],h1:"A strong idea.",h2:"Sign in before you buy.",tag:"Gated customiser",w:["nav","hero","tabs!","fm!","txt","ls","em!","ft"],ok:"$190 price, Member Product label and the custom-time note sit upfront.",iss:[["Primary CTA reads \"Sign In to Buy\"","signin","h"],["Customiser and delivery estimate absent from served page","served","m"],["Photo widget serves empty","served","m"]]},
+{id:"launch",sec:"Product",n:"SNKRS launch calendar",p:"/launch",nav:"In nav",sc:[3,3,1,2,1],h1:"Hype lives here.",h2:"No dates on the calendar.",tag:"Shell in the HTML",w:["nav","tabs","c3!","c3","c3","em!","ft"],ok:"Twelve release cards with Buy and Learn More links in one feed.",iss:[["No H1 and no robots meta","h1","m"],["Release dates absent from served page","served","m"],["Descriptions read only \"Segment: All\"","meta","l"]]},
+{id:"running",sec:"Shop",n:"Running",p:"/running",nav:"In nav",sc:[4,4,2,3,4],h1:"Shop by run, not by SKU.",h2:"One section twice.",tag:"Strong sport hub",w:["nav","hero","c3","it","c3","c3!","c3","c4","c3","c6","ls","ft"],ok:"Shop by Run Type and Distance help a runner choose by need.",iss:[["Shoe finder linked at two URLs","twin","h"],["\"Shop by Cushioning Type\" served twice","stray","l"],["Hero Learn More uses http://","meta","l"]]},
+{id:"finder",sec:"Product",n:"Running shoe finder",p:"/running-shoe-finder",nav:"Running page",sc:[2,2,1,3,1],h1:"A quiz on the menu.",h2:"Two doors, no H1.",tag:"Twin, no canonical",w:["nav","em!","ft"],ok:"Its description says plainly what the tool does.",iss:[["Served at /running-shoe-finder and /running/shoe-finder","twin","h"],["No canonical, robots or H1","h1","m"],["Quiz absent from served page","served","m"]]},
+{id:"acg",sec:"Shop",n:"ACG",p:"/acg",nav:"In nav",sc:[3,4,2,2,2],h1:"Gear with a point of view.",h2:"The H1 is a file name.",tag:"Good world, bad tags",w:["nav","ca!","it","it","c6","c3","ca","c3","ls","ft"],ok:"Shop Everything ACG lists ten items priced $50 to $400.",iss:[["H1 reads \"acg_LP Logo\"","h1","m"],["Carousel counters disagree, 1 of 4 vs 1 of 3","stray","l"],["One alt string reused on most images","alt","l"]]},
+{id:"locker",sec:"Shop",n:"Locker Room",p:"/LockerRoom",nav:"In nav",sc:[4,4,2,2,2],h1:"Fan gear by league.",h2:"Tamba Bay, Inter Milian.",tag:"Useful, typo-prone",w:["nav","hero!","c4","ca","ca","ls","c6","ft"],ok:"Shop by League, by Athlete and by Sport offer three clear ways in.",iss:[["Typos: \"Tamba Bay Rays\", \"Inter Milian\"","typo","m"],["No H1","h1","m"],["Canonical lowercases the nav URL","twin","h"],["Football goes to /w/football and /us-football","label","m"]]},
+{id:"cart",sec:"Account",n:"Bag",p:"/cart",nav:"Header",sc:[4,3,1,2,3],h1:"Simple bag.",h2:"Join links loop back.",tag:"Clean, two dead links",w:["nav","txt","tb","fm!","ft"],ok:"One Checkout button and a clear $50 free-shipping nudge.",iss:[["\"Join us\" and \"Sign-in\" both point to /cart","signin","h"],["Free shipping framed as member-only","ship","m"],["Summary table has an empty row","stray","l"]]},
+{id:"register",sec:"Account",n:"Sign in",p:"/register",nav:"Header",sc:[2,3,1,3,2],h1:"Labelled Sign In.",h2:"Titled Login.",tag:"Shell only",w:["em!"],ok:"Its canonical points to one /login, a sensible end state.",iss:[["Linked as Sign In and Join; path /register; title Login","signin","h"],["Form absent from served page","served","m"]]},
+{id:"member",sec:"Account",n:"Membership",p:"/membership",nav:"Header",sc:[5,4,1,3,4],h1:"Benefits, spelled out.",h2:"Three names for joining.",tag:"Clear value pitch",w:["nav","hero","ca","c4","ls","fq","ft"],ok:"Eight named benefits, including a 60-day wear test, before the ask.",iss:[["Sign Up, Join Us and Sign In all go to /register","signin","h"],["No member counts or testimonials","proof","m"],["Hero block served twice","stray","l"]]},
+{id:"help",sec:"Help",n:"Help",p:"/help",nav:"Header",sc:[4,4,3,3,3],h1:"Help that shows its hours.",h2:"A two-word meta.",tag:"Clear help desk",w:["nav","heroc","c6","st","ls","ft"],ok:"Chat and phone both list 4 am - 11 pm PT, 7 days a week.",iss:[["Pinch-zoom disabled in the viewport tag","zoom","m"],["Chat and Call options carry no links","served","m"],["Meta description is \"Nike Customer Service\"","meta","l"]]},
+{id:"returns",sec:"Help",n:"Return policy",p:"/help/a/returns-policy",nav:"Footer",sc:[5,3,3,3,2],h1:"60 days, plainly.",h2:"The H1 says GET HELP.",tag:"Clear policy",w:["nav","heroc!","txt","fq","txt","ls","ft"],ok:"The 60-day window and item exceptions are stated in plain words.",iss:[["How-to page linked at two URLs","twin","h"],["H1 is the site header; title is an H2","h1","m"],["Non-member return cost not stated","ship","m"],["Pinch-zoom disabled","zoom","m"]]},
+{id:"retail",sec:"Help",n:"Find a store",p:"/retail",nav:"Header",sc:[3,2,1,2,4],h1:"Fifteen stores listed.",h2:"\"No Nike Stores nearby.\"",tag:"Contradicts itself",w:["nav","txt!","fm!","ls","ft"],ok:"A View All Stores directory link gives a fallback.",iss:[["\"No Nike Stores nearby.\" sits above 15 stores","store","m"],["Search input and map absent from served page","served","m"]]},
+{id:"gift",sec:"Shop",n:"Gift cards",p:"/gift-cards",nav:"Footer",sc:[4,4,1,3,4],h1:"Two ways to gift.",h2:"No amounts shown.",tag:"Clear, thin",w:["nav","hero","hero!","c6","cb","ls","ft"],ok:"Email or mail choice and a balance check sit side by side.",iss:[["No denominations or prices on the page","proof","m"],["Zoom capped at 2x","zoom","m"],["Hero block served twice","stray","l"]]},
+{id:"promo",sec:"Promo",n:"Promo codes",p:"/promo-code",nav:"Footer",sc:[2,3,1,2,4],h1:"Discounts, listed.",h2:"No codes on the codes page.",tag:"Promise unkept",w:["nav","heroc!","c3","c6!","fq","ls","ft"],ok:"Student, military, teacher and responder offers each link to terms.",iss:[["Title promises codes; none are listed","codes","m"],["Sale markdowns run about 5–22% beside \"Extra 25%\"","promo","h"],["Birthday terms slug differs from the footer link","label","m"]]},
+{id:"news",sec:"Content",n:"Product news",p:"/product-news",nav:"Footer",sc:[3,3,2,2,4],h1:"Lots of launches.",h2:"Few of them dated.",tag:"Busy, undated",w:["nav","c6","c6!","c6","c6","c6","ft"],ok:"Splits news by lifestyle, shoes, running and basketball.",iss:[["Most items undated; Air Max Day 2025 mixed in","newsd","m"],["Air Max 95 x LEGO links to an Air Works slug","newsd","m"],["Same stories repeat across sections","stray","l"]]},
+{id:"article",sec:"Content",n:"11 tips to run faster",p:"/a/11-tips-to-help-you-run-faster",nav:"Off-nav",sc:[4,3,4,2,3],h1:"Named experts, cited studies.",h2:"Eleven tips, twelve sections.",tag:"Good content, ageing",w:["nav","heroc","txt","txt","q","txt!","txt","txt","cb","ft"],ok:"Nine named experts and five journals cited: rare proof on this site.",iss:[["Dated October 2021, no nav path leads here","stale","h"],["Title says 11 tips; body has 12 sections","typo","m"],["Updated Oct 25 2021, published Oct 26 2021","typo","m"]]},
+{id:"first",sec:"Off-nav",n:"First Access",p:"/6453",nav:"Off-nav",sc:[3,2,1,2,1],h1:"Early access, explained.",h2:"At a bare number.",tag:"Orphan page",w:["nav","tabs","txt","txt!","ls","ft"],ok:"A single H1 and a one-line promise of early access.",iss:[["Indexable at /6453 with no descriptive slug","stale","h"],["No sign-up CTA beyond the header","proof","m"],["Intro block repeated word for word","stray","l"]]},
+{id:"acg21",sec:"Off-nav",n:"ACG Summer 2021",p:"/acg/summer-2021",nav:"Off-nav",sc:[2,2,1,1,2],h1:"A 2021 lookbook.",h2:"Still indexed in 2026.",tag:"Stale, indexable",w:["nav","hero!","txt!","ca","ca","ca","ca","ls","ft"],ok:"Shop the Collection points to the live ACG clothing grid.",iss:[["2021 campaign live with index, follow","stale","h"],["Products in the looks are plain text, not links","stale","h"],["Italian alternates point to estate-2011","smap","l"]]}
+];
+const F=[
+{k:"promo",s:"high",t:"One sale, three stories",d:"Homepage and Black Friday meta say “up to 50% off”; the Black Friday H1 and nav say “Extra 25%”. The Black Friday grid uses code BFRIDAY, men’s best sellers use EARLYBF. The sale grid shows no end date; only the homepage meta mentions 11/28. /promo-code lists sale markdowns of roughly 5–22%.",r:"Drive percentage, code and end date from one promo record that feeds meta tags, H1s, the nav, card badges and /promo-code.",p:["home","bf","mbest","promo"]},
+{k:"signin",s:"high",t:"Sign-in links that loop or mislabel",d:"Header “Sign In” points to /register, which is titled “Login” and canonicals to /login. On /cart, “Join us” and “Sign-in” both link back to /cart. Membership’s Sign Up, Join Us and Sign In all land on /register. The homepage also carries a second sign-in on accounts.nike.com. By You’s buy button reads “Sign In to Buy”.",r:"Route every account CTA through one auth component with two intents, sign in and join, each with its own real URL.",p:["home","cart","register","member","byyou"]},
+{k:"twin",s:"high",t:"Same page, several URLs",d:"The shoe finder serves at /running-shoe-finder and /running/shoe-finder, neither with a canonical. The AF1 page served at slug jBrhbr canonicals to slug DZejrQoC. Locker Room is linked as /LockerRoom but canonicals to /lockerroom. Returns links its how-to page at /help/a/how-to-return and /how-to-return.",r:"Pick one path per page, 301 the rest, and make the link component emit canonical paths only.",p:["finder","running","pdp","locker","returns"]},
+{k:"stale",s:"high",t:"Old and orphan pages still indexable",d:"/acg/summer-2021 is a 2021 lookbook set to index, follow, with unlinked products. /6453 (First Access) is live and indexable at a bare number with no nav path. The 11-tips article dates from October 2021 and is reachable only by search.",r:"Give campaign pages an expiry date in the CMS; on expiry, noindex and redirect to the live collection.",p:["acg21","first","article"]},
+{k:"served",s:"med",t:"Key buying content not in the served page",d:"Not in the served page: the AF1 star score and review list, the By You customiser and delivery estimate, SNKRS release dates, the shoe-finder quiz, the store search and map, the login form, and NikeSKIMS sign-up fields. These likely render in the browser, which this audit did not run.",r:"Server-render the decision data (ratings, dates, delivery estimate) even where the interactive control stays client-side.",p:["pdp","byyou","launch","finder","retail","register","skims","help"]},
+{k:"store",s:"med",t:"Store finder contradicts itself",d:"“No Nike Stores nearby.” sits directly above “15 Stores Near You”, mostly in Ontario, on an en-US page. Results likely follow the visitor’s location, so a US shopper may see different stores.",r:"Suppress the empty-state message whenever results exist, and label the location the results are based on.",p:["retail"]},
+{k:"proof",s:"med",t:"Proof stops at the product page",d:"Ratings appear only on the product page (5628 reviews), and even there the star score is not served. Hubs for men, women and NikeSKIMS show no ratings or review counts; membership shows no member numbers; gift cards show no amounts. Claims like “most responsive yet” carry no source.",r:"Add a served rating-and-count slot to the product-card component so every grid and hub carousel inherits proof.",p:["men","women","skims","member","gift","first","pdp"]},
+{k:"ship",s:"med",t:"Shipping and returns promises worded differently",d:"Kids, product and By You meta tags say “Free delivery and returns.” The product page body says free shipping on $50+ and free 60-day returns for Members. The bag says add $50.00 more “as a Member”. The return policy never says what guests pay.",r:"Write the promise once as a shared snippet with member and guest terms, and pull it into meta templates and page bodies.",p:["kids","pdp","gifting","cart","returns"]},
+{k:"codes",s:"med",t:"A promo-code page with no codes",d:"The title reads “Official Nike Promo Codes & Coupons 2026”, but no code is listed, not even BFRIDAY. The page covers eligibility discounts at 10% each.",r:"Render the current public code from the promo record, or retitle the page around eligibility discounts.",p:["promo"]},
+{k:"h1",s:"med",t:"Missing or misplaced H1s",d:"No H1: /launch, the shoe finder, Locker Room. Wrong H1: ACG (“acg_LP Logo”), Sportswear (the gifting hero), Return policy (“GET HELP”), NikeSKIMS (a sub-collection). Sportswear and Running also tag Best Reads cards as H1.",r:"Let the page template own a single H1 from the page-name field, and demote module headings to H2 or H3.",p:["launch","finder","locker","acg","nsw","returns","skims"]},
+{k:"label",s:"med",t:"Menu labels that don’t match their links",d:"“Very Berry” opens a navy slug. Women’s “Shop by Color” opens Matching Sets. Men’s “Latest Drops” uses two URLs. Football goes to /w/football and /us-football. “JORDAN RETRO” opens Heat Check. Menus mix “Tops & Graphic Tees” and “Tops & Graphics Tees”.",r:"Treat the mega-menu config as one file: one label, one destination, one spelling, checked automatically on publish.",p:["women","men","gifting","locker","jordan","promo"]},
+{k:"grid",s:"med",t:"Product-grid data glitches",d:"Every filter count reads (0) on Black Friday and nearly every one on men’s best sellers. Men’s best sellers lists women’s Air Jordan styles and repeats eight cards. Some cards show “See Price in Bag” instead of a price.",r:"Fix facet counts and gender filtering in the product-feed query, and de-duplicate by style code.",p:["bf","mbest"]},
+{k:"zoom",s:"med",t:"Pinch-zoom limited",d:"Help and Return policy set maximum-scale=1 and user-scalable=no. Gift cards and /6453 cap zoom at 2.0.",r:"Remove maximum-scale and user-scalable from the shared viewport tag.",p:["help","returns","gift"]},
+{k:"typo",s:"med",t:"Typos and naming drift",d:"Locker Room: “Tamba Bay Rays”, “Inter Milian”, “Scottie Sheffler”. The Kids title repeats “Nike.com”. The NikeSKIMS title ends “Body Obsessed..”. The 11-tips article has 12 sections and an update date one day before its publish date. Kids age bands overlap at 7.",r:"Append the brand once in the title template, and check athlete and team names against one roster source.",p:["locker","kids","skims","article"]},
+{k:"newsd",s:"med",t:"Product news undated or mislinked",d:"Most Product News items carry no date, and an Air Max Day 2025 item sits among 2026 stories. The Air Max 95 x LEGO card links to an Air Works slug, on both Product News and Kids.",r:"Show a publish date on every news card and check each card’s link against its title at publish.",p:["news","kids"]},
+{k:"meta",s:"low",t:"Thin or placeholder metadata",d:"SNKRS descriptions read “Segment: All” and the page has no robots tag. Help’s meta description is three words. Men’s best sellers uses a 192px app icon as og:image. Some links still use http://.",r:"Block publishing when the meta description or og:image is empty or a default value.",p:["launch","help","mbest","running"]},
+{k:"stray",s:"low",t:"Stray UI and doubled blocks in the served HTML",d:"Nearly every page serves an about:blank link, a guest-session-html link and two “Cancel” labels. Many content blocks are served twice, likely desktop and mobile variants.",r:"Render one responsive block instead of two, and keep the guest-session frame out of the content flow.",p:["home","men","women","jordan","member","gift","news","cart","first","running","pdp","acg"]},
+{k:"alt",s:"low",t:"Alt text generic, wrong or raw",d:"Homepage running images describe a NikeSKIMS Waffle Racer. Hubs reuse one alt string, such as “ACG - All Conditions Gear”. Sportswear, Gifting, Membership and Gift cards alt text contains a literal <br>.",r:"Pull alt text from the asset record, not the page title, and strip HTML when it is saved.",p:["home","acg","nsw","acg21"]},
+{k:"smap",s:"low",t:"Flat sitemap signals",d:"Every visible entry in the US landing-page and article sitemaps has priority 0.5, changefreq daily and no lastmod. Some localised ACG slugs contain spaces, and Italian alternates of summer-2021 point to estate-2011. /sitemap.xml and the US gridwall sitemap returned errors to our fetch.",r:"Emit real lastmod values from the CMS, drop uniform priority and changefreq, and validate localised slugs at publish.",p:["acg","acg21","article"]}
+];
+const HEAT=[
+["Black Friday",[["Extra 25% Off","bf"],["Black Friday Best Sellers"],["Men's Black Friday"],["Women's Black Friday"],["Kids' Black Friday"],["Promo codes","promo"]]],
+["Men",[["Men","men"],["New Arrivals"],["Best Sellers","mbest"],["Latest Drops"],["SNKRS Launch Calendar","launch"],["Custom Shoes"],["Shoes"],["Clothing"],["Accessories"],["Running","running"],["ACG","acg"],["Locker Room","locker"],["Basketball"],["Soccer"],["Golf"],["Training"]]],
+["Women",[["Women","women"],["New Arrivals"],["Best Sellers"],["Shop by Color"],["Leggings"],["Bras"],["Volleyball"],["Cheer"]]],
+["Kids",[["Kids","kids"],["Nike x LEGO"],["Teens"],["Big Kids"],["Little Kids"],["Baby & Toddler"]]],
+["Jordan",[["Jordan","jordan"],["Heat Check"],["AJ1"],["Space Jam"]]],
+["NikeSKIMS",[["NikeSKIMS","skims"],["Collection Guide"],["Bra Guide"],["Lookbook"]]],
+["Sportswear & Gifts",[["Sportswear","nsw"],["Gifts","gifting"],["Gift Cards","gift"]]],
+["Product & bag",[["Product page","pdp"],["By You","byyou"],["Shoe finder","finder"],["Bag","cart"],["Sign In","register"],["Membership","member"],["Favorites"]]],
+["Help",[["Help","help"],["Return policy","returns"],["Order status"],["Shipping"],["Find a Store","retail"]]],
+["Content & off-nav",[["Product News","news"],["11 tips article","article"],["First Access /6453","first"],["ACG Summer 2021","acg21"],["Sustainability (302 to about.nike.com)"]]]
+];
+
+const BH={nav:8,hero:36,heroc:30,lg:10,c3:24,c4:22,c6:30,it:26,ti:26,st:16,q:18,fq:28,fm:34,cb:18,ca:24,ls:16,tb:26,tr:34,em:22,tabs:28,txt:16,ft:16};
+function wire(blocks){
+  const W=120,pad=6;let y=0;const parts=[];
+  const r=(x,y,w,h,c,rx=1.5)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+  const lines=(x,y,w,n,gap=4)=>Array.from({length:n},(_,i)=>r(x,y+i*gap,i===n-1?w*.6:w,2,"w-ink",1)).join("");
+  blocks.forEach(raw=>{
+    const flag=raw.endsWith("!"),b=raw.replace("!",""),h=BH[b]||16;let g="";
+    const x0=pad,w=W-pad*2,y0=y+3,ih=h-6;
+    switch(b){
+      case"nav":g=r(0,y,W,h,"w-band",0)+r(pad,y+3,12,2.5,"w-dark")+r(W-pad-14,y+2.5,14,3.5,"w-acc",2);break;
+      case"hero":g=r(x0,y0+4,w*.42,4,"w-dark")+r(x0,y0+11,w*.38,4,"w-dark")+lines(x0,y0+19,w*.4,2)+r(x0,y0+ih-7,18,5,"w-acc",2.5)+r(x0+w*.52,y0,w*.48,ih,"w-img");break;
+      case"heroc":g=r(x0+w*.15,y0+4,w*.7,4,"w-dark")+r(x0+w*.25,y0+11,w*.5,4,"w-dark")+r(x0+w*.3,y0+18,w*.4,2,"w-ink")+r(x0+w*.5-12,y0+ih-7,24,5,"w-acc",2.5);break;
+      case"lg":for(let i=0;i<6;i++)g+=r(x0+i*(w/6)+2,y0+1,w/6-4,ih-2,"w-ink");break;
+      case"c3":case"c4":case"c6":{const n=b==="c4"?4:3,rows=b==="c6"?2:1,gw=(w-(n-1)*3)/n,gh=(ih-(rows-1)*3)/rows;
+        for(let rr=0;rr<rows;rr++)for(let i=0;i<n;i++){const xx=x0+i*(gw+3),yy=y0+rr*(gh+3);g+=r(xx,yy,gw,gh,"w-band")+r(xx+2,yy+2,gw-4,gh*.45,"w-img")+r(xx+2,yy+gh*.6,gw*.7,2,"w-ink",1);}break;}
+      case"it":g=r(x0,y0,w*.45,ih,"w-img")+r(x0+w*.52,y0+3,w*.4,3,"w-dark")+lines(x0+w*.52,y0+9,w*.45,3);break;
+      case"ti":g=r(x0+w*.55,y0,w*.45,ih,"w-img")+r(x0,y0+3,w*.4,3,"w-dark")+lines(x0,y0+9,w*.45,3);break;
+      case"st":for(let i=0;i<3;i++)g+=r(x0+i*(w/3)+4,y0+1,w/3-14,5,"w-dark")+r(x0+i*(w/3)+4,y0+8,w/3-10,2,"w-ink",1);break;
+      case"q":g=r(x0+6,y0+1,5,5,"w-acc",1)+lines(x0+16,y0+2,w-26,3);break;
+      case"fq":for(let i=0;i<4;i++)g+=r(x0,y0+i*5.5,w,4,"w-band");break;
+      case"fm":g=r(x0+8,y0,w-16,ih,"w-band")+r(x0+14,y0+4,w*.4,3,"w-dark")+[0,1,2].map(i=>r(x0+14,y0+10+i*5.5,w-28,3.5,"w-bg",1)).join("")+r(x0+14,y0+ih-7,20,4.5,"w-acc",2);break;
+      case"cb":g=r(0,y+2,W,h-4,"w-dark",0)+r(W/2-14,y+h/2-2.5,28,5,"w-acc",2.5);break;
+      case"ca":for(let i=0;i<3;i++)g+=r(x0+7+i*((w-14)/3),y0,(w-14)/3-3,ih,"w-band")+lines(x0+10+i*((w-14)/3),y0+4,(w-14)/3-9,3);break;
+      case"ls":g=lines(x0,y0+2,w*.8,3,3.5);break;
+      case"tb":for(let i=0;i<4;i++)g+=r(x0,y0+i*5,w,4,i===0?"w-ink":"w-band",0.5);break;
+      case"tr":for(let i=0;i<4;i++){const gw=(w-9)/4;g+=r(x0+i*(gw+3),y0,gw,ih,"w-band")+r(x0+i*(gw+3)+2,y0+3,gw-4,3,"w-dark")+lines(x0+i*(gw+3)+2,y0+9,gw-4,i===0?1:4);}break;
+      case"em":g=`<rect x="${x0}" y="${y0}" width="${w}" height="${ih}" rx="2" class="w-empty"/>`;break;
+      case"tabs":g=[0,1,2].map(i=>r(x0+i*22,y0,19,4,i?"w-ink":"w-dark",2)).join("")+r(x0,y0+7,w,ih-7,"w-img");break;
+      case"txt":g=r(x0,y0+1,w*.5,3,"w-dark")+lines(x0,y0+6,w*.9,2);break;
+      case"ft":g=r(0,y,W,h,"w-dark",0)+lines(pad,y+4,30,2)+lines(pad+40,y+4,30,2);break;
+    }
+    if(flag)g+=`<rect x="1.5" y="${y+1}" width="${W-3}" height="${h-2}" rx="3" class="w-flag"/><circle cx="${W-6}" cy="${y+6}" r="3.2" class="w-flagdot"/>`;
+    parts.push(g);y+=h;
+  });
+  return `<svg viewBox="0 0 ${W} ${y}" role="img" aria-label="Wireframe of page sections"><rect width="${W}" height="${y}" class="w-bg"/>${parts.join("")}</svg>`;
+}
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const $=id=>document.getElementById(id);
+const LN=["Message","Path","Proof","Hygiene","Findable"];
+const FI={};F.forEach((f,i)=>FI[f.k]=i);
+P.forEach(p=>p.score=Math.round(p.sc.reduce((a,b)=>a+b,0)/25*100));
+const PI={};P.forEach((p,i)=>PI[p.id]=p);
+const site=Math.round(P.reduce((a,p)=>a+p.score,0)/P.length);
+const lens=LN.map((_,i)=>P.reduce((a,p)=>a+p.sc[i],0)/P.length);
+const band=s=>s>=75?"s":s>=55?"f":"w";
+const col=s=>({s:"var(--lime)",f:"var(--amber)",w:"var(--pink)"})[band(s)];
+const dotc=v=>v>=4?"var(--lime)":v===3?"var(--amber)":"var(--pink)";
+const low=lens.filter(x=>x<2.5).length;
+const stamp=(site>=75&&Math.min(...lens)>=3)?"Yes":(site<50||low>=2)?"No":"Maybe";
+const order=lens.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]);
+const best=LN[order[0][1]],worst=LN[order[4][1]];
+const sorted=[...P].sort((a,b)=>b.score-a.score);
+$("scope").textContent=`${P.length} pages · 23 November 2026 · buyer lens, first visit to checkout · site score ${site}`;
+$("headline").innerHTML=`A great storefront, <span class="l">a leaky stockroom.</span>`;
+$("take").innerHTML=[
+["What works",`${best} and Path lead (${lens[0].toFixed(1)} and ${lens[1].toFixed(1)}). ${sorted[0].n} is the top page at ${sorted[0].score}: fit advice, sizes and one Add to Bag.`],
+["Biggest weakness",`${worst} averages ${lens[2].toFixed(1)}. Outside the product page there are no served ratings, and the sale is quoted three different ways.`],
+["The pattern",`Shared parts drift: the promo record, the menu config, the auth links and the H1 template each say one thing in one place and another elsewhere.`]
+].map(t=>`<div><b>${t[0]}</b>${esc(t[1])}</div>`).join("");
+$("lens").innerHTML=LN.map((n,i)=>`<div><span class="mono">${n}</span><div class="big" style="color:${lens[i]>=3.5?"var(--lime)":lens[i]>=2.5?"var(--amber)":"var(--pink)"}">${lens[i].toFixed(1)}</div><span class="mono">of 5</span></div>`).join("");
+$("heat").innerHTML=HEAT.map(([s,nodes])=>`<div class="hs"><h4>${esc(s)}</h4><div class="tiles">${nodes.map(([l,id])=>{const p=id&&PI[id];return p?`<a class="tile t-${band(p.score)}" href="#pg-${id}" title="${esc(p.p)} · ${p.score}">${esc(l)} · ${p.score}</a>`:`<span class="tile t-n">${esc(l)}</span>`}).join("")}</div></div>`).join("")
++`<div class="hs"><h4>Subdomains</h4><div class="tiles">${["about.nike.com","news.nike.com","jobs.nike.com","investors.nike.com","purpose.nike.com","accounts.nike.com"].map(s=>`<span class="tile t-n">${s}</span>`).join("")}</div></div>`;
+const sevName={high:"High",med:"Medium",low:"Low"};
+let fsev="all";
+function drawF(){$("flist").innerHTML=F.map((f,i)=>fsev!=="all"&&f.s!==fsev?"":`<li class="fi" id="f-${i+1}"><span class="num">${i+1}</span><div><h3><span class="sev sev-${f.s}">${sevName[f.s]}</span>${esc(f.t)}</h3><p>${esc(f.d)}</p><p class="fix"><b>Fix.</b> ${esc(f.r)}</p><div class="chips">${f.p.map(id=>`<a class="chip" href="#pg-${id}">${esc(PI[id].n)}</a>`).join("")}</div></div></li>`).join("")}
+$("fbar").innerHTML=[["all","All "+F.length],["high","High"],["med","Medium"],["low","Low"]].map(([k,l])=>`<button data-k="${k}" aria-pressed="${k==="all"}">${l}</button>`).join("");
+$("fbar").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;fsev=b.dataset.k;[...$("fbar").children].forEach(x=>x.setAttribute("aria-pressed",x===b));drawF()});
+drawF();
+const SECS=["All",...new Set(P.map(p=>p.sec))];let psec="All";
+const sevCol={h:"var(--pink)",m:"var(--amber)",l:"var(--dim)"};
+function drawP(){const list=P.filter(p=>psec==="All"||p.sec===psec);$("cards").innerHTML=list.map((p,i)=>`<article class="card" id="pg-${p.id}"><div class="wf">${wire(p.w)}<div class="cap">Wireframe</div></div><div><div class="top"><div><p class="eb" style="margin:0"><svg><use href="#arw"/></svg>Page ${P.indexOf(p)+1} of ${P.length} · ${esc(p.sec)}</p></div><div class="dots"><div class="row">${p.sc.map((v,j)=>`<i style="background:${dotc(v)}" title="${LN[j]} ${v}"></i>`).join("")}</div><span class="pscore" style="color:${col(p.score)}">${p.score}</span><small>${esc(p.tag)}</small></div></div><h3>${esc(p.h1)} <span class="l">${esc(p.h2)}</span></h3><a class="path" href="${U}${p.p}">${esc(p.n)} · ${esc(p.p)}</a> <span class="mono">· ${esc(p.nav)}</span><p class="ok"><b>Works.</b> ${esc(p.ok)}</p><ul class="iss">${p.iss.map(([t,k,s])=>`<li><span class="d" style="background:${sevCol[s]}"></span><span>${esc(t)} ${k!=null?`<a href="#f-${FI[k]+1}">#${FI[k]+1}</a>`:""}</span></li>`).join("")}</ul></div></article>`).join("")}
+$("pbar").innerHTML=SECS.map(s=>`<button data-s="${s}" aria-pressed="${s==="All"}">${s}</button>`).join("");
+$("pbar").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;psec=b.dataset.s;[...$("pbar").children].forEach(x=>x.setAttribute("aria-pressed",x===b));drawP()});
+drawP();
+const st=$("stamp");st.className="stamp "+stamp.toLowerCase();st.innerHTML=`<div class="big">${stamp}</div><div class="mono" style="color:inherit">site score ${site}</div>`;
+$("vhead").innerHTML=`Strong ${best.toLowerCase()}. <span class="l">Weak ${worst.toLowerCase()}.</span>`;
+$("why").textContent=`A site score of ${site} alone would read Maybe. The stamp is No because two lenses sit under 2.5: Proof at ${lens[2].toFixed(1)} and Hygiene at ${lens[3].toFixed(1)}. A shopper can still go from hub to product page to bag, and the product page is the best on the site at ${sorted[0].score}. Around it, shared parts disagree with each other, and proof is hard to find in the served page. Hygiene is close to the line: fixing the promo record, the menu config and the H1 template would likely lift it to Maybe. Yes needs served ratings on grids and hubs to raise Proof above 3.`;
+$("fix").textContent="Before Black Friday on 27 November, drive the offer's percentage, code and end date from one promo record into the meta tags, H1s, nav, card badges and /promo-code. Then watch promo-code errors and bag-to-checkout on /cart through Cyber Monday.";
+const nochip=F.filter(f=>!f.p.length).length,nook=P.filter(p=>!p.ok).length;
+$("checks").innerHTML=`<b>Checks</b>All scores computed by script. Findings without a page chip: ${nochip}. Pages without a Works line: ${nook}. Quotes kept under 15 words. All images labelled as wireframes; no screenshots (connect a browser to capture them). Open: Clarity City is not embedded, so body text uses the system sans.`;
+const SRC=["/","/robots.txt","/sitemap-v2-landingpage-index.xml","/sitemap-v2-landingpage-en-us.xml","/sitemap-v2-article-index.xml","/sitemap-v2-article-en-us.xml","/sitemap-v2-gridwall-index.xml",...P.map(p=>p.p).filter(x=>x!=="/"),"/running/shoe-finder","/sustainability"];
+$("src").innerHTML=[...new Set(SRC)].map(s=>`<li><a href="${U}${s}">nike.com${esc(s)}</a></li>`).join("");
+}
+</script>
+</body></html>

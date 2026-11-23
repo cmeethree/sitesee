@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sitesee. nike.com map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: sass-y idea labs, sitesee. Walk 02 — the map
+   IDEA: a surveyor's sitemap of a very big store
+   PICTURE: root node, utility chips, one branching column per nav section
+   COLOUR and TYPE: ink, bone, lime, pink; Abril Fatface + system sans + DM Mono
+   LAYOUT: root band, columns grid, panels for off-nav, subdomains, locales, footer */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;--sky:#8fb8d8;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.5 "Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
+.band{padding:clamp(28px,4vw,56px) 0;border-top:1px solid var(--line)}
+.eb{font:500 13px/1.3 "DM Mono",ui-monospace,monospace;color:var(--dim);display:flex;align-items:center;gap:8px;margin:0 0 14px}
+.eb svg{width:14px;height:14px;stroke:var(--lime);flex:none}
+h1,h2{font-family:"Abril Fatface",Georgia,serif;font-weight:400;line-height:1.12;margin:0;padding-bottom:.06em;text-wrap:balance}
+h1{font-size:clamp(46px,8vw,96px)}h2{font-size:clamp(28px,4vw,44px);margin-bottom:16px}
+.l{color:var(--lime)}
+.mono{font:13px "DM Mono",ui-monospace,monospace;color:var(--dim)}
+.root{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:26px}
+.rnode{background:var(--lime);color:var(--ink);border-radius:12px;padding:14px 20px;text-decoration:none;font-family:"Abril Fatface",serif;font-size:26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:12px "DM Mono",monospace;border:1px solid var(--line);border-radius:999px;padding:6px 11px;text-decoration:none;color:var(--bone)}
+.chip:hover,.n a:hover{border-color:var(--lime)}
+.leg{display:flex;flex-wrap:wrap;gap:14px;margin:20px 0 0}.leg span{display:flex;align-items:center;gap:6px}
+.k{width:14px;height:14px;border-radius:4px;display:inline-block;border:1.5px solid var(--bone)}
+.k.off{border-color:var(--dim);background:#24241f}.k.sub{border:1.5px dashed var(--sky)}.k.cl{border-color:var(--lime);box-shadow:3px 3px 0 -1px var(--ink),3px 3px 0 0 var(--lime)}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.col>a.h{display:block;font-family:"Abril Fatface",serif;font-size:22px;text-decoration:none;margin-bottom:4px}
+.col>.p{font:12px "DM Mono",monospace;color:var(--dim);margin-bottom:10px;display:block}
+.tree{list-style:none;margin:0;padding:0 0 0 12px;border-left:1px solid var(--line)}
+.tree .tree{margin:4px 0 6px 4px}
+.n{position:relative;padding:3px 0 3px 12px;font-size:14px}
+.n::before{content:"";position:absolute;left:-12px;top:13px;width:18px;border-top:1px solid var(--line)}
+.n a{text-decoration:none;border:1px solid transparent;border-radius:6px;padding:1px 5px}
+.n .pa{font:11px "DM Mono",monospace;color:var(--dim);margin-left:4px;word-break:break-all}
+.n.g>span.lab{font:500 12px "DM Mono",monospace;color:var(--dim)}
+.tag{font:11px "DM Mono",monospace;border-radius:999px;padding:1px 7px;margin-left:4px}
+.t-off{background:#24241f;color:var(--dim)}.t-col{border:1px solid var(--lime);color:var(--lime)}.t-flag{border:1px dashed var(--pink);color:var(--pink)}
+.panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.pnl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.pnl h3{margin:0 0 10px;font:500 14px "DM Mono",monospace;color:var(--bone)}
+.pnl ul{margin:0;padding-left:18px}.pnl li{margin:5px 0;font-size:14px}
+.sub{border:1.5px dashed var(--sky)}
+.open{border:1.5px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:14px}
+.end{font:500 15px "DM Mono",monospace;margin:30px 0 8px}
+.cur{display:inline-block;width:.6em;height:1.1em;background:var(--lime);vertical-align:-3px;margin-left:4px;animation:bl 1.1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}@media(prefers-reduced-motion:reduce){.cur{animation:none}}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 40px;border-top:1px solid var(--line)}
+a:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+
+.wnav{position:relative;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:12px 20px;border-bottom:1px solid #2a2a25;background:#0c0c0b;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:13px}
+.wnav a{color:#8f8e82;text-decoration:none}
+.wnav a:hover,.wnav a:focus-visible{color:#f1f0e8}
+.wnav .home{font-family:"Abril Fatface",Georgia,serif;font-size:20px;color:#f1f0e8}
+.wnav .home span{color:#c8f135}
+.wnav .tabs{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.wnav .tabs a[aria-current]{color:#c8f135}
+.wnav .w{color:#8f8e82}
+</style></head><body><nav class="wnav" id="wnav" aria-label="sitesee. walk"><a class="home" href="../../index.html">sitesee<span>.</span></a><div class="tabs"><span class="w">Walk 02 · nike.com</span><a href="map.html" aria-current="page">The map</a><a href="walk.html">The walk</a><a href="audit.html">The audit</a></div></nav>
+<svg width="0" height="0" style="position:absolute"><symbol id="arw" viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+<div class="wrap">
+<header class="band" style="border-top:0">
+<p class="eb"><svg><use href="#arw"/></svg>sitesee. · Walk 02 · The map</p>
+<h1>nike.com<span class="l">.</span></h1>
+<p class="mono">US English · from the served header, mega-menu, footer, robots.txt and sitemap indexes · 23 November 2026</p>
+<div class="root"><a class="rnode" href="https://www.nike.com/">Home /</a><div class="chips" id="util"></div></div>
+<div class="leg mono"><span><i class="k"></i>In nav</span><span><i class="k off"></i>Off-nav (live, indexed, no menu link)</span><span><i class="k sub"></i>Subdomain</span><span><i class="k cl"></i>Collection</span><span><i class="k" style="border:1.5px dashed var(--pink)"></i>Red flag</span></div>
+</header>
+<section class="band">
+<p class="eb"><svg><use href="#arw"/></svg>Top nav · 8 sections</p>
+<h2>Eight doors, <span class="l">all on sale.</span></h2>
+<p class="mono" style="margin-top:-6px">Every section's mega-menu opens with Black Friday promotions. Grid pages (/w/…) are collections; the US gridwall sitemap did not load, so counts are not given.</p>
+<div class="cols" id="cols"></div>
+</section>
+<section class="band">
+<p class="eb"><svg><use href="#arw"/></svg>Beyond the menu</p>
+<h2>Off-nav, subdomains, <span class="l">and the footer.</span></h2>
+<div class="panels" id="panels"></div>
+<div class="open"><b class="mono" style="color:var(--pink)">Sitemap red flags</b><br>/sitemap.xml and the US gridwall sitemap returned errors. Every visible landing-page and article entry has priority 0.5, changefreq daily and no lastmod. Some localised ACG slugs contain spaces; Italian alternates of /acg/summer-2021 point to estate-2011. robots.txt disallows */p/ while a product sitemap index exists.</div>
+<p class="end">sass-y idea labs<span class="cur" aria-hidden="true"></span></p>
+</section>
+<footer class="mono"><span>sass-y / idea labs · sitesee.</span><span>nike.com</span></footer>
+</div>
+<script>
+{
+const U="https://www.nike.com";
+const UTIL=[["Search + Ask NikeAI",null],["Find a Store","/retail"],["Help","/help"],["Join Us","/membership"],["Sign In","/register"],["Favorites","/favorites"],["Bag","/cart"]];
+// [label, path, kind, children]  kind: n=nav, c=collection, o=off, f=flag
+const NAV=[
+["Black Friday","/w/black-friday-2phlm",[["Extra 25% Off Select Styles","/w/black-friday-2phlm","c"],["Black Friday Best Sellers","/w/promotion-best-sellers-cmvh","c"],["Men","/w/mens-black-friday-2phlmznik1","c"],["Women","/w/womens-black-friday-2phlmz5e1x6","c"],["Kids","/w/kids-black-friday-2phlmzv4dh","c"]]],
+["Men","/men",[["Browse",null,"g",[["New Arrivals","/w/new-mens-3n82yznik1","c"],["Best Sellers","/w/mens-best-76m50znik1","c"],["Latest Drops","/w/new-upcoming-drops-k0gk","f"],["Gifts","/w/mens-gifts-3b0ufznik1","c"],["SNKRS Launch Calendar","/launch","n"]]],["Shoes",null,"g",[["Custom Shoes (By You)","/w/mens-nike-by-you-shoes-6ealhznik1zy7ok","c"],["Running, Basketball, Jordan…",null,"c"]]],["Clothing · Accessories",null,"c"],["Shop By Sport (heading, no link)",null,"g",[["ACG","/acg","n"],["Running","/running","n"],["Locker Room","/LockerRoom","f"],["Football","/us-football","n"],["Tennis","/court","n"],["Basketball · Soccer · Golf · Swim · Skate · Training",null,"n"]]]]],
+["Women","/women",[["Browse",null,"g",[["New Arrivals",null,"c"],["Best Sellers","/w/womens-best-5e1x6z76m50","c"],["Gifts",null,"c"]]],["Shop by Color",null,"g",[["Very Berry (navy slug)",null,"f"],["Dark Neutrals · Purple Pulse · Spruce Greens · Warm Neutrals",null,"c"]]],["Clothing",null,"g",[["Bras · Leggings · Matching Sets…",null,"c"]]],["Shop By Sport",null,"g",[["Cheer","/w/cheerleading-1cyjk","c"],["Softball","/w/womens-softball-2dlpvz5e1x6","c"],["Volleyball","/w/womens-volleyball-5e1x6ztc2u","c"]]]]],
+["Kids","/kids",[["Browse",null,"g",[["Nike x LEGO®","/w/nike-lego-collection-58jr","c"],["Teens Collection","/teens","n"]]],["Shoes by age",null,"g",[["Big Kids 7–15",null,"f"],["Little Kids 3–7",null,"f"],["Baby & Toddler 0–3",null,"c"]]],["Shop By Sport",null,"g",[["Gymnastics","/w/gymnastics-dance-inspired-2obuy","c"],["Fan Gear · Football · Running…",null,"c"]]]]],
+["Jordan","/jordan",[["Heat Check","/w/jordan-heat-check-1n7xt","c"],["Jordan Brand x Space Jam","/w/jordan-brand-x-space-jam-collection-9b8qk","c"],["Basketball · Golf · Cleats",null,"c"],["Men / Women / Kids · AJ1",null,"c"],["Accessories (one URL across genders)","/w/jordan-accessories-equipment-37eefzawwpw","f"]]],
+["NikeSKIMS","/nikeskims",[["Shoes: Rift, Waffle Racer",null,"c"],["Clothing",null,"c"],["Shop by Color (4) · by Material (11)",null,"f"],["Collection Guide","/nikeskims-collection-guide","n"],["Bra Guide","/nikeskims-bra-guide","n"],["Lookbook","/nikeskims-lookbook","n"]]],
+["Sportswear","/sportswear",[["View All Lifestyle","/w/lifestyle-13jrm","c"]]],
+["Gifts","/gifting",[["Shop Gifts","/w/gifts-3b0uf","c"],["Gift Cards","/gift-cards","n"]]]
+];
+const lab={c:'<span class="tag t-col">collection</span>',f:'<span class="tag t-flag">flag</span>',o:'<span class="tag t-off">off-nav</span>'};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const node=([l,p,k,ch])=>`<li class="n${k==="g"?" g":""}">${k==="g"?`<span class="lab">${esc(l)}</span>`:p?`<a href="${U}${p}">${esc(l)}</a><span class="pa">${esc(p)}</span>`:`<span>${esc(l)}</span>`}${lab[k]||""}${ch?`<ul class="tree">${ch.map(node).join("")}</ul>`:""}</li>`;
+document.getElementById("util").innerHTML=UTIL.map(([l,p])=>p?`<a class="chip" href="${U}${p}">${l} <span class="mono">${p}</span></a>`:`<span class="chip">${l}</span>`).join("");
+document.getElementById("cols").innerHTML=NAV.map(([l,p,ch])=>`<div class="col"><a class="h" href="${U}${p}">${esc(l)}</a><span class="p">${esc(p)}</span><ul class="tree">${ch.map(node).join("")}</ul></div>`).join("");
+const L=(t,p)=>`<li><a href="${p.startsWith("http")?p:U+p}">${esc(t)}</a> <span class="mono">${esc(p.replace("https://",""))}</span></li>`;
+const PN=[
+["Off-nav pages (live, indexed)",[["First Access","/6453"],["ACG Summer 2021","/acg/summer-2021"],["11 Tips to Help You Run Faster","/a/11-tips-to-help-you-run-faster"],["Running shoe finder (two URLs)","/running-shoe-finder"],["Running shoe finder twin","/running/shoe-finder"],["ACG journal and behind-the-design pages","/acg/journal"]],""],
+["Subdomains",[["About Nike","https://about.nike.com/en"],["Magazine","https://about.nike.com/en/magazine"],["News","https://news.nike.com"],["Careers","https://jobs.nike.com"],["Investors","https://investors.nike.com"],["Purpose","https://purpose.nike.com"],["Sustainability (302 from /sustainability)","https://about.nike.com/en/mission/focus-areas/sustainability"]],"sub"],
+["Footer-only links",[["Promo codes","/promo-code"],["Product News","/product-news"],["Corporate Sales","/corporate-sales"],["Return policy","/help/a/returns-policy"],["Shipping and Delivery","/help/a/shipping-delivery"],["Gift Card Balance","/orders/gift-card-lookup"],["Student discount","/help/a/student-discount"],["Accessibility (two paths)","/us/en/accessibility/"]],""],
+["Collections (sitemap indexes)",[["Landing pages · 64 locale sitemaps","/sitemap-v2-landingpage-index.xml"],["Product pages index","/sitemap-v2-pdp-index.xml"],["Grid pages · 63 locale sitemaps","/sitemap-v2-gridwall-index.xml"],["Articles /a/ · 64 locale sitemaps","/sitemap-v2-article-index.xml"],["SNKRS","/sitemap-v2-snkrsweb-index.xml"],["Store locator","/sitemap-locator-index.xml"],["US help","/sitemap-us-help.xml"]],""]
+];
+document.getElementById("panels").innerHTML=PN.map(([h,items,c])=>`<div class="pnl ${c}"><h3>${h}</h3><ul>${items.map(i=>L(...i)).join("")}</ul></div>`).join("")+`<div class="pnl"><h3>Locales</h3><p style="margin:0;font-size:14px">64 language-country sitemaps: 5 in the Americas (en-us, es-us, en-ca, fr-ca, es-mx), 44 in Europe and Israel, 14 in Asia-Pacific, 1 in Africa. The footer selector lists about 60 country sites.</p></div>`;
+}
+</script>
+</body></html>

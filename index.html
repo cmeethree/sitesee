@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sitesee. walk the site.</title>
+<meta name="description" content="sitesee. by sass-y idea labs: independent walks of public websites. A map, a 3D walk and a scored audit for each.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: sass-y idea labs — confident, fair, a little cheeky
+   IDEA: a walking-tour board listing each numbered walk
+   PICTURE: the big lowercase wordmark, then the walk list as large rows
+   COLOUR and TYPE: ink, bone, lime, pink; Abril Fatface + system sans + DM Mono
+   LAYOUT: one column up to 1100px; each walk a full-width row with its three pieces */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;--amber:#c9a55a;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--ink);color:var(--bone);font:17px/1.55 "Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 max(5vw,16px)}
+.eb{font:500 13px/1.3 "DM Mono",ui-monospace,monospace;color:var(--dim);display:flex;align-items:center;gap:8px;margin:0 0 14px}
+.eb svg{width:14px;height:14px;stroke:var(--lime);flex:none}
+h1,h2,.big{font-family:"Abril Fatface",Georgia,serif;font-weight:400;line-height:1.05;margin:0;padding-bottom:.08em}
+h1{font-size:clamp(72px,16vw,190px);letter-spacing:-.01em}
+h1 span,.l{color:var(--lime)}
+.tagline{font:400 clamp(26px,4vw,40px)/1.15 "Abril Fatface",serif;margin:6px 0 22px}
+.lede{max-width:62ch;color:var(--bone)}
+.what{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin:30px 0 0}
+.what div{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel)}
+.what b{display:block;font:500 13px "DM Mono",monospace;color:var(--lime);margin-bottom:6px}
+.what p{margin:0;font-size:15px}
+section{padding:clamp(36px,5vw,72px) 0;border-top:1px solid var(--line)}
+header{padding:clamp(36px,6vw,80px) 0 clamp(30px,4vw,56px)}
+h2{font-size:clamp(32px,5vw,52px);margin-bottom:22px}
+.walk{display:grid;grid-template-columns:110px 1fr auto;gap:10px 24px;align-items:center;padding:22px 0;border-top:1px solid var(--line)}
+.walk:last-child{border-bottom:1px solid var(--line)}
+.walk .n{font:500 13px "DM Mono",monospace;color:var(--dim)}
+.walk .site{font-family:"Abril Fatface",serif;font-size:clamp(30px,4.5vw,46px);line-height:1.05;text-decoration:none}
+.walk .site span{color:var(--lime)}
+.walk .meta{font:13px "DM Mono",monospace;color:var(--dim);margin-top:4px}
+.walk .hl{margin:6px 0 0;font-size:16px}
+.pieces{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pieces a{font:500 13px "DM Mono",monospace;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:0 14px;min-height:40px;display:inline-flex;align-items:center}
+.pieces a:hover,.pieces a:focus-visible{border-color:var(--lime);color:var(--lime);outline:none}
+.stamp{border:3px solid;border-radius:12px;padding:8px 14px;text-align:center;transform:rotate(-4deg);min-width:104px}
+.stamp .big{font-size:34px;line-height:1}
+.stamp small{display:block;font:12px "DM Mono",monospace}
+.st-yes{color:var(--lime)}.st-maybe{color:var(--amber)}.st-no{color:var(--pink)}
+.small{font:13px "DM Mono",monospace;color:var(--dim)}
+.end{font:500 15px "DM Mono",monospace;margin:36px 0 8px}
+.cur{display:inline-block;width:.6em;height:1.1em;background:var(--lime);vertical-align:-3px;margin-left:4px;animation:bl 1.1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}@media(prefers-reduced-motion:reduce){.cur{animation:none}}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 0 40px;border-top:1px solid var(--line);font:13px "DM Mono",monospace;color:var(--dim)}
+@media(max-width:640px){.walk{grid-template-columns:1fr auto}.walk .n{grid-column:1/-1}}
+</style></head><body>
+<div class="wrap">
+<header>
+<p class="eb"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>sass-y idea labs</p>
+<h1>sitesee<span>.</span></h1>
+<p class="tagline">walk the site<span class="l">.</span></p>
+<p class="lede">Each walk takes one public website on foot, page by page, the way a buyer would. We map it, turn it into a city you can tour, and score 25 to 30 pages on five lenses. Every walk ends in a Yes, Maybe or No, and one concrete fix.</p>
+<div class="what">
+<div><b>The map</b><p>Every nav section, off-nav page, subdomain and locale, each linked to its live page.</p></div>
+<div><b>The walk</b><p>The site as a 3D city with a guided tour. Taller buildings are pages the site pushes harder.</p></div>
+<div><b>The audit</b><p>Message, Path, Proof, Hygiene and Findable, scored per page, with wireframes, ranked findings and a verdict.</p></div>
+</div>
+</header>
+<section>
+<p class="eb"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>The walks</p>
+<h2>Sites we've <span class="l">walked.</span></h2>
+<div id="walks"></div>
+<p class="small" style="margin-top:18px">Independent audits from publicly served pages. Not affiliated with, or endorsed by, the sites reviewed.</p>
+<p class="end">sass-y idea labs<span class="cur" aria-hidden="true"></span></p>
+</section>
+<footer><span>sass-y / idea labs · sitesee.</span><span>walk the site.</span></footer>
+</div>
+<script>
+{
+// Newest first. Add a row here for each new walk, with its folder under walks/.
+const WALKS=[
+{n:"Walk 02",site:"nike.com",dir:"walks/nike/",when:"November 2026",pages:29,score:57,stamp:"No",hl:"A great storefront, a leaky stockroom.",pieces:["map","walk","audit"]},
+{n:"Walk 01",site:"braze.com",dir:"walks/braze/",when:"October 2026",pages:25,score:59,stamp:"Maybe",hl:"Strong product story, leaky front door.",pieces:["map","walk","audit"]}
+];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const lab={map:"The map",walk:"The walk",audit:"The audit"};
+document.getElementById("walks").innerHTML=WALKS.map(w=>`<article class="walk"><span class="n">${esc(w.n)}</span><div><a class="site" href="${w.dir}audit.html">${esc(w.site)}<span>.</span></a><div class="meta">${esc(w.when)} · ${w.pages} pages · buyer lens · site score ${w.score}</div><p class="hl">${esc(w.hl)}</p><div class="pieces">${w.pieces.map(p=>`<a href="${w.dir}${p}.html">${lab[p]}</a>`).join("")}</div></div><div class="stamp st-${w.stamp.toLowerCase()}"><div class="big">${w.stamp}</div><small>${w.score}</small></div></article>`).join("");
+}
+</script>
+</body></html>
