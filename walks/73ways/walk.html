@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sitesee. 73ways.co walk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a guided night walk, calm and specific
+   IDEA: the site as a small town: one tower, four districts, an annexe next door
+   PICTURE: full-screen three.js city with a docked tour panel
+   COLOUR and TYPE: ink ground, soft district hues, lime for home and the active stop; Abril Fatface, DM Mono
+   LAYOUT: canvas fills the screen, panel left on desktop, docked bottom on phones */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;
+--serif:"Abril Fatface",Georgia,serif;--mono:"DM Mono",ui-monospace,Menlo,monospace;--sans:"Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;background:var(--ink);color:var(--bone);font:15px/1.5 var(--sans);overflow:hidden}
+a{color:inherit}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab}
+.panel{position:fixed;left:20px;top:20px;bottom:20px;width:min(380px,calc(100% - 40px));background:rgba(21,21,19,.94);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;overflow:auto;z-index:2}
+.wlinks{display:flex;flex-wrap:wrap;gap:14px;font:12px var(--mono)}
+.wlinks a{color:var(--dim);text-decoration:none}.wlinks a:hover,.wlinks a:focus-visible{color:var(--lime)}
+.brand{font-family:var(--serif);font-size:30px;line-height:1.1}
+.brand span{color:var(--lime)}
+.eb{display:flex;align-items:center;gap:8px;font:13px/1.3 var(--mono);color:var(--dim);margin:0}
+.eb svg{width:14px;height:14px;flex:none;color:var(--lime)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3vw,32px);line-height:1.12;margin:0;padding-bottom:.08em;text-wrap:balance}
+h1 .t{color:var(--lime)}
+.body{margin:0;color:var(--bone)}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.list li{border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:default;transition:border-color .2s}
+.list li:hover,.list li:focus-within{border-color:var(--lime)}
+.list b{font-weight:500;display:block}
+.list small{font:11px var(--mono);color:var(--dim);word-break:break-all}
+.list .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:0}
+.ctrl{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:6px}
+.ctrl button{font:13px var(--mono);background:transparent;color:var(--bone);border:1px solid var(--line);border-radius:999px;min-height:44px;min-width:44px;padding:0 14px;cursor:pointer}
+.ctrl button:hover,.ctrl button:focus-visible{border-color:var(--lime);color:var(--lime);outline:none}
+.ctrl .prog{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}.ctrl .prog i{display:block;height:100%;background:var(--lime);width:0;transition:width .4s}
+.note{font:11px var(--mono);color:var(--dim);margin:0}
+.tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:12px var(--mono);z-index:3;display:none;max-width:280px}
+.tip b{display:block;font:500 13px var(--sans);color:var(--bone)}
+.tip span{color:var(--dim)}
+.card{position:fixed;right:20px;bottom:20px;width:min(320px,calc(100% - 40px));background:var(--panel);border:1px solid var(--lime);border-radius:14px;padding:16px 18px;z-index:3;display:none}
+.card h2{font-family:var(--serif);font-weight:400;font-size:22px;margin:0 0 4px;line-height:1.15}
+.card p{margin:0 0 10px;font:12px var(--mono);color:var(--dim);word-break:break-all}
+.card .k{font:12px var(--mono);color:var(--lime);margin-bottom:6px}
+.card a.go{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;background:var(--lime);color:var(--ink);text-decoration:none;font:500 13px var(--mono)}
+.card .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--dim);font:20px var(--mono);width:44px;height:44px;cursor:pointer}
+.foot{position:fixed;right:20px;top:20px;font:12px var(--mono);color:var(--dim);z-index:2;text-align:right}
+.foot span{color:var(--lime)}
+@media(max-width:700px){
+ .panel{top:auto;left:10px;right:10px;bottom:10px;width:auto;max-height:46vh;padding:14px 16px;gap:8px}
+ .brand{font-size:22px}
+ .card{right:10px;left:10px;width:auto;bottom:auto;top:10px}
+ .foot{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="3D city of 73ways.co: each nav section is a district, each section a building"></canvas>
+<div class="foot">sass-y / idea labs · sitesee<span>.</span><br>73ways.co</div>
+<aside class="panel" id="panel" aria-live="polite">
+  <div class="wlinks"><a href="../../index.html">← sitesee.</a><a href="map.html">The map</a><a href="audit.html">The audit</a></div>
+  <p class="eb" style="margin:0"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>sitesee<span style="color:#c8f135">.</span> · Walk 03 · The walk</span></p>
+  <div class="brand">73ways.co<span>.</span></div>
+  <p class="eb"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="eyebrow"></span></p>
+  <h1 id="head"></h1>
+  <p class="body" id="text"></p>
+  <ul class="list" id="list"></ul>
+  <div class="ctrl">
+    <button type="button" id="prev" aria-label="Previous stop">←</button>
+    <button type="button" id="play" aria-pressed="false">Play</button>
+    <button type="button" id="next" aria-label="Next stop">→</button>
+    <div class="prog" aria-hidden="true"><i id="prog"></i></div>
+  </div>
+  <p class="note">Building heights are judgement calls about how hard the site pushes each section, not traffic data. Drag to orbit, scroll to zoom, arrow keys to step.</p>
+</aside>
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="card" id="card" role="dialog" aria-label="Section details"><button class="x" id="cx" aria-label="Close">×</button><div class="k" id="ck"></div><h2 id="cn"></h2><p id="cu"></p><a class="go" id="cg" href="#">Open the live page ↗</a></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+const D={ // districts on the ring
+ how:{name:"How I Work",anchor:"#how",hue:0x7aa6d9,ang:-0.35},
+ about:{name:"About",anchor:"#about",hue:0xd99a7a,ang:1.22},
+ res:{name:"Resources",anchor:"#resources",hue:0xa58fd9,ang:2.79},
+ talk:{name:"Let's Talk",anchor:"#contact",hue:0x6fc7b0,ang:4.36}
+};
+const B=[
+ {id:"home",kind:"tower",name:"Homepage · Hero",url:"https://73ways.co/#home",h:16},
+ {id:"tiers",kind:"page",d:"how",name:"Engagements · 3 tiers",url:"https://73ways.co/#how",h:10,dx:-2.4,dz:0},
+ {id:"fits",kind:"page",d:"how",name:"Not sure which fits?",url:"https://73ways.co/#how",h:4,dx:2.6,dz:0.6},
+ {id:"bio",kind:"page",d:"about",name:"I'm Sravanthi",url:"https://73ways.co/#about",h:8,dx:-1.8,dz:0},
+ {id:"why",kind:"page",d:"about",name:"Why 73?",url:"https://73ways.co/#about",h:3,dx:2.4,dz:0.4},
+ {id:"res",kind:"page",d:"res",name:"Resources",url:"https://73ways.co/#resources",h:5,dx:0,dz:0},
+ {id:"close",kind:"page",d:"talk",name:"Closing CTA",url:"https://73ways.co/#contact",h:9,dx:0,dz:0},
+ {id:"pains",kind:"off",name:"Pain points",url:"https://73ways.co/#problem",h:6,ang:0.45},
+ {id:"services",kind:"off",name:"Services",url:"https://73ways.co/#unclear",h:7,ang:0.78},
+ {id:"exp",kind:"off",name:"Experience I bring",url:"https://73ways.co/#experience",h:6,ang:3.58},
+ {id:"primer",kind:"sub",name:"Founder Primer · 10 principles",url:"https://build-your-startup-right.73ways.co/",h:10,floors:10,at:"res",r:36,y:9},
+ {id:"cal",kind:"ext",name:"Google Calendar booking",url:"https://calendar.app.google/cEJYn9h49pzVjtcp9",h:4,at:"talk",also:"how",r:34,y:8,angOff:-0.55},
+ {id:"li",kind:"ext",name:"LinkedIn (footer)",url:"https://www.linkedin.com/in/sravanthi-kalepu/",h:2,at:"talk",r:31,y:5,angOff:0.32}
+];
+const KIND={tower:"Home",page:"Section in the nav",off:"Off-nav section (anchor, no menu link)",sub:"Subdomain",ext:"Off-site handoff"};
+const STOPS=[
+ {h:["One long page,","one annexe."],t:"73ways.co is a single homepage with five anchor links and one free tool on a subdomain. Each nav item is a district on the ring. Sections without a menu link sit on the outskirts, and anything off the main host floats on a tether.",
+  focus:"all",cam:[0,62,74],tgt:[0,0,0],legend:true},
+ {h:["Everything happens","in one tower."],t:"The homepage is the whole site, so it's the tallest thing in town. The hero names the offer and a founder in one screen, and its button jumps to #contact, one scroll short of booking.",
+  focus:["home"],cam:[14,22,22],tgt:[0,7,0],list:["home"]},
+ {h:["One priced door,","two open-ended rooms."],t:"How I Work holds the three engagements. The $990 Diagnostic is the clearest offer on the site. The other two tiers name a pricing model, not a figure, and the “Not sure which fits?” box opens the calendar.",
+  focus:["how","tiers","fits","cal"],d:"how",list:["tiers","fits","cal"]},
+ {h:["A founder up front,","a name story behind."],t:"About is warm and specific: a real person, a real voice. The Why 73? card follows and sits on the path between the bio and the ask.",
+  focus:["about","bio","why"],d:"about",list:["bio","why"]},
+ {h:["One tool on the shelf,","built next door."],t:"Resources holds a single card pointing to the Founder Primer. The tool itself lives on its own subdomain, floating off this district.",
+  focus:["res","primer"],d:"res",list:["res","primer"]},
+ {h:["One clear ask,","handed to Google."],t:"The closing section has one button, “Book a 30-minute call”, which leaves the site for a Google Calendar page. LinkedIn and the email address sit beside it.",
+  focus:["talk","close","cal","li"],d:"talk",list:["close","cal","li"]},
+ {h:["The best tool lives next door,","and its exit loops home."],t:"The primer is the richest stop: 10 principles and 42 self-checks. Its “Work with 73 Ways” button returns to the top of the homepage, not to booking. The calendar is the only place a visit converts, and it's off-site.",
+  focus:["primer","cal","li","res","talk"],cam:[14,52,40],tgt:[-18,4,-6],list:["primer","cal","li"]},
+ {h:["Three sections with addresses,","no signposts."],t:"Pain points (#problem), Services (#unclear) and Experience (#experience) each have their own anchor, but no menu links to them. They're some of the page's strongest writing, out on the edge of town.",
+  focus:["pains","services","exp"],cam:[0,40,0.1],tgt:[0,0,0],list:["pains","services","exp"]}
+];
+
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canvas=document.getElementById("c");
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0c0c0b);
+scene.fog=new THREE.Fog(0x0c0c0b,90,190);
+const camera=new THREE.PerspectiveCamera(45,1,0.5,500);
+camera.position.set(0,62,74);
+const controls=new THREE.OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.maxPolarAngle=Math.PI*0.48;controls.minDistance=10;controls.maxDistance=160;
+
+scene.add(new THREE.HemisphereLight(0xf1f0e8,0x0c0c0b,0.55));
+const sun=new THREE.DirectionalLight(0xffffff,0.75);sun.position.set(30,60,20);scene.add(sun);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(120,64),new THREE.MeshStandardMaterial({color:0x121210,roughness:1}));
+ground.rotation.x=-Math.PI/2;scene.add(ground);
+const grid=new THREE.PolarGridHelper(60,16,6,64,0x2a2a25,0x1c1c19);grid.position.y=0.02;scene.add(grid);
+
+const groups={}; // key -> list of {mat, base}
+const meshes=[];
+function track(key,mat){(groups[key]=groups[key]||[]).push(mat);mat.transparent=true;mat.userData.base=mat.opacity;}
+function mat(color,opts={}){return new THREE.MeshStandardMaterial(Object.assign({color,roughness:.75,metalness:.05},opts));}
+
+// plaza + tower
+const plaza=new THREE.Mesh(new THREE.CylinderGeometry(7,7,0.4,48),mat(0x1d1d1a));plaza.position.y=0.2;scene.add(plaza);track("home",plaza.material);
+const RING=22,OUT=40;
+const pos={};
+function place(b){
+ const w=b.kind==="tower"?4.5:3.2;
+ if(b.kind==="sub"){
+  const g=new THREE.Group();
+  for(let i=0;i<b.floors;i++){const f=new THREE.Mesh(new THREE.BoxGeometry(4.6,0.75,4.6),mat(0xc8f135,{opacity:.28,emissive:0x2a3310}));f.position.y=i*0.95;g.add(f);track(b.id,f.material);f.userData.b=b;meshes.push(f);}
+  return g;
+ }
+ const col=b.kind==="tower"?0xc8f135:b.kind==="off"?0x55554d:b.kind==="ext"?0x8f8e82:D[b.d].hue;
+ const m=mat(col,b.kind==="tower"?{emissive:0x3a4a10}:b.kind==="ext"?{opacity:.35}:{});
+ const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,b.h,w),m);mesh.position.y=b.h/2;
+ mesh.userData.b=b;meshes.push(mesh);track(b.id,m);
+ const g=new THREE.Group();g.add(mesh);return g;
+}
+function road(from,to,key,color=0x2a2a25){
+ const dx=to.x-from.x,dz=to.z-from.z,len=Math.hypot(dx,dz);
+ const r=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.12,len),mat(color));
+ r.position.set((from.x+to.x)/2,0.08,(from.z+to.z)/2);r.rotation.y=Math.atan2(dx,dz);scene.add(r);track(key,r.material);
+}
+function tether(a,b,key){
+ const geo=new THREE.BufferGeometry().setFromPoints([a,b]);
+ const l=new THREE.Line(geo,new THREE.LineDashedMaterial({color:0x8f8e82,dashSize:0.8,gapSize:0.6}));
+ l.computeLineDistances();scene.add(l);track(key,l.material);
+}
+function label(text,x,y,z,key,color="#f1f0e8"){
+ const cv=document.createElement("canvas");cv.width=1024;cv.height=128;const c=cv.getContext("2d");
+ c.font="500 44px 'DM Mono', monospace";c.fillStyle=color;c.textAlign="center";c.textBaseline="middle";c.fillText(text,512,64);
+ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthWrite:false}));
+ s.scale.set(24,3,1);s.position.set(x,y,z);scene.add(s);track(key,s.material);
+}
+// districts
+for(const [k,d] of Object.entries(D)){
+ const x=Math.cos(d.ang)*RING,z=Math.sin(d.ang)*RING;d.x=x;d.z=z;
+ const pad=new THREE.Mesh(new THREE.CylinderGeometry(6.5,6.5,0.3,40),mat(d.hue,{opacity:.22}));pad.position.set(x,0.15,z);scene.add(pad);track(k,pad.material);
+ road({x:Math.cos(d.ang)*7,z:Math.sin(d.ang)*7},{x:Math.cos(d.ang)*(RING-6.5),z:Math.sin(d.ang)*(RING-6.5)},k);
+ label(d.name,x,0.6,z+8.6,k,"#"+d.hue.toString(16));
+}
+label("73ways.co",0,0.6,9.4,"home","#c8f135");
+// outskirts ring
+const ring=new THREE.Mesh(new THREE.RingGeometry(OUT-0.4,OUT+0.4,96),new THREE.MeshBasicMaterial({color:0x2a2a25,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=0.05;scene.add(ring);track("ring",ring.material);
+label("outskirts · no menu link",Math.cos(2.05)*OUT,0.6,Math.sin(2.05)*OUT,"ring","#8f8e82");
+// buildings
+for(const b of B){
+ const g=place(b);let x=0,z=0,y=0;
+ if(b.kind==="page"){const d=D[b.d];const a=d.ang+Math.PI/2;x=d.x+Math.cos(a)*b.dx+Math.cos(d.ang)*b.dz;z=d.z+Math.sin(a)*b.dx+Math.sin(d.ang)*b.dz;}
+ else if(b.kind==="off"){x=Math.cos(b.ang)*OUT;z=Math.sin(b.ang)*OUT;}
+ else if(b.kind==="sub"||b.kind==="ext"){const d=D[b.at];const a=d.ang+(b.angOff||0);x=Math.cos(a)*b.r;z=Math.sin(a)*b.r;y=b.y;
+  tether(new THREE.Vector3(d.x,0.3,d.z),new THREE.Vector3(x,y,z),b.id);
+  if(b.also){const e=D[b.also];tether(new THREE.Vector3(e.x,0.3,e.z),new THREE.Vector3(x,y,z),b.id);}
+  if(b.id==="primer")tether(new THREE.Vector3(x,y+b.floors*0.95,z),new THREE.Vector3(0,16,0),b.id); // its exit loops back to the homepage
+ }
+ g.position.set(x,y,z);scene.add(g);pos[b.id]=new THREE.Vector3(x,y+(b.h||4)/2,z);
+}
+
+// fade + highlight
+const allKeys=Object.keys(groups);
+let focusSet=null,hoverId=null,activeId=null;
+function applyFocus(){
+ for(const k of allKeys){const on=!focusSet||focusSet.has(k)||(k==="ring"&&focusSet.has("pains"));
+  for(const m of groups[k]){m.opacity=(on?1:0.12)*(m.userData.base??1);}}
+ for(const m of meshes){const id=m.userData.b.id;const lit=id===hoverId||id===activeId;
+  if(m.material.emissive){m.material.emissive.setHex(lit?0x5a7a10:(id==="home"?0x3a4a10:id==="primer"?0x2a3310:0x000000));}}
+}
+
+// tour
+let stop=0,playing=false,timer=null,anim=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const byId=Object.fromEntries(B.map(b=>[b.id,b]));
+const swatch=b=>b.kind==="tower"?"#c8f135":b.kind==="off"?"#55554d":b.kind==="ext"?"#8f8e82":b.kind==="sub"?"rgba(200,241,53,.4)":"#"+D[b.d].hue.toString(16);
+function go(i,instant){
+ stop=(i+STOPS.length)%STOPS.length;const s=STOPS[stop];
+ $("eyebrow").textContent=`Stop ${stop+1} of ${STOPS.length}`;
+ $("head").innerHTML=`${esc(s.h[0])} <span class="t">${esc(s.h[1])}</span>`;
+ $("text").textContent=s.t;
+ $("prog").style.width=((stop+1)/STOPS.length*100)+"%";
+ if(s.legend){
+  $("list").innerHTML=[["#c8f135","Home tower","The homepage itself"],["#7aa6d9","District","One per nav item, tinted"],["#55554d","Outskirts","Sections with no menu link"],["rgba(200,241,53,.4)","Floating, tethered","Subdomain or off-site handoff"]].map(([c,a,b])=>`<li><b><span class="sw" style="background:${c}"></span>${a}</b><small>${b}</small></li>`).join("");
+ } else {
+  $("list").innerHTML=s.list.map(id=>{const b=byId[id];return `<li data-id="${id}" tabindex="0"><b><span class="sw" style="background:${swatch(b)}"></span>${esc(b.name)}</b><small>${esc(b.url.replace("https://",""))}</small></li>`}).join("");
+ }
+ focusSet=s.focus==="all"?null:new Set(s.focus);activeId=null;applyFocus();
+ let cam,tgt;
+ if(s.d){const d=D[s.d];const out=new THREE.Vector3(Math.cos(d.ang),0,Math.sin(d.ang));tgt=new THREE.Vector3(d.x,4,d.z);cam=tgt.clone().add(out.multiplyScalar(15)).add(new THREE.Vector3(0,11,0)).add(new THREE.Vector3(-out.z*5,0,out.x*5));}
+ else{cam=new THREE.Vector3(...s.cam);tgt=new THREE.Vector3(...s.tgt);if(innerWidth<700)cam=tgt.clone().add(cam.clone().sub(tgt).multiplyScalar(1.6));}
+ if(reduce||instant){camera.position.copy(cam);controls.target.copy(tgt);anim=null;}
+ else anim={t0:performance.now(),dur:1400,fromP:camera.position.clone(),fromT:controls.target.clone(),toP:cam,toT:tgt};
+}
+$("list").addEventListener("mouseover",e=>{const li=e.target.closest("li[data-id]");hoverId=li?li.dataset.id:null;applyFocus();});
+$("list").addEventListener("mouseleave",()=>{hoverId=null;applyFocus();});
+$("list").addEventListener("focusin",e=>{const li=e.target.closest("li[data-id]");if(li){hoverId=li.dataset.id;applyFocus();}});
+$("list").addEventListener("click",e=>{const li=e.target.closest("li[data-id]");if(li)openCard(byId[li.dataset.id]);});
+$("prev").addEventListener("click",()=>{stopPlay();go(stop-1);});
+$("next").addEventListener("click",()=>{stopPlay();go(stop+1);});
+function stopPlay(){playing=false;clearInterval(timer);$("play").textContent="Play";$("play").setAttribute("aria-pressed","false");}
+$("play").addEventListener("click",()=>{if(playing){stopPlay();return;}playing=true;$("play").textContent="Pause";$("play").setAttribute("aria-pressed","true");go(stop+1);timer=setInterval(()=>go(stop+1),7000);});
+addEventListener("keydown",e=>{if(e.target.closest&&e.target.closest("input,textarea"))return;if(e.key==="ArrowRight"){stopPlay();go(stop+1);}else if(e.key==="ArrowLeft"){stopPlay();go(stop-1);}else if(e.key==="Escape"){$("card").style.display="none";}});
+
+// hover + click
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let down=null;
+function pick(e){const r=canvas.getBoundingClientRect();mouse.x=(e.clientX-r.left)/r.width*2-1;mouse.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(mouse,camera);const h=ray.intersectObjects(meshes)[0];return h?h.object.userData.b:null;}
+canvas.addEventListener("pointermove",e=>{const b=pick(e);const tip=$("tip");
+ if(b){tip.innerHTML=`<b>${esc(b.name)}</b><span>${esc(b.url.replace("https://",""))}</span>`;tip.style.display="block";tip.style.left=Math.min(e.clientX+14,innerWidth-290)+"px";tip.style.top=(e.clientY+14)+"px";canvas.style.cursor="pointer";}
+ else{tip.style.display="none";canvas.style.cursor="grab";}
+ if(hoverId!==(b&&b.id)){hoverId=b?b.id:null;applyFocus();}});
+canvas.addEventListener("pointerdown",e=>{down=[e.clientX,e.clientY];});
+canvas.addEventListener("pointerup",e=>{if(!down)return;const moved=Math.hypot(e.clientX-down[0],e.clientY-down[1]);down=null;if(moved>5)return;const b=pick(e);if(b)openCard(b);});
+function openCard(b){activeId=b.id;applyFocus();$("ck").textContent=KIND[b.kind];$("cn").textContent=b.name;$("cu").textContent=b.url.replace("https://","");$("cg").href=b.url;$("card").style.display="block";}
+$("cx").addEventListener("click",()=>{$("card").style.display="none";activeId=null;applyFocus();});
+
+// loop
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;if(w>700){const sh=Math.min(420,w*.32);camera.setViewOffset(w+sh,h,0,0,w,h);}else{const sv=h*.36;camera.setViewOffset(w,h+sv,0,sv,w,h);}camera.updateProjectionMatrix();}
+addEventListener("resize",resize);resize();
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function loop(now){
+ if(anim){const t=Math.min(1,(now-anim.t0)/anim.dur),k=ease(t);camera.position.lerpVectors(anim.fromP,anim.toP,k);controls.target.lerpVectors(anim.fromT,anim.toT,k);if(t>=1)anim=null;}
+ controls.update();renderer.render(scene,camera);requestAnimationFrame(loop);
+}
+go(0,true);requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

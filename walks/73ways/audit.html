@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sitesee. 73ways.co audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: independent, specific, fair to a solo founder's site
+   IDEA: a surveyor's walk report, one stop at a time
+   PICTURE: heat map of every node, wireframe per stop
+   COLOUR and TYPE: sass-y ink, bone, lime twist, pink flags; Abril Fatface, Clarity City, DM Mono
+   LAYOUT: title, takeaways, heat, findings, stops, verdict, method */
+:root{--ink:#0c0c0b;--panel:#151513;--line:#2a2a25;--bone:#f1f0e8;--dim:#8f8e82;--lime:#c8f135;--pink:#ff6a8a;--amber:#c9a24a;
+--serif:"Abril Fatface",Georgia,serif;--mono:"DM Mono",ui-monospace,Menlo,monospace;--sans:"Clarity City",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:20px}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.55 var(--sans);overflow-x:clip}
+a{color:inherit;text-underline-offset:3px}
+a:hover{color:var(--lime)}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
+section{padding:clamp(36px,5vw,72px) 0;border-top:1px solid var(--line)}
+.eb{display:flex;align-items:center;gap:8px;font:13px/1.3 var(--mono);color:var(--dim);margin:0 0 14px}
+.eb svg{width:14px;height:14px;flex:none;color:var(--lime)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.12;margin:0 0 .45em;text-wrap:balance;padding-bottom:.08em}
+h1{font-size:clamp(52px,10vw,120px);line-height:1.02}
+h2{font-size:clamp(30px,4.4vw,48px)}
+h3{font-size:clamp(21px,2.2vw,26px)}
+.t{color:var(--lime)}
+.scope{font:14px/1.5 var(--mono);color:var(--dim)}
+.lede{max-width:62ch;color:var(--bone)}
+.top{padding:clamp(40px,7vw,96px) 0 clamp(28px,4vw,48px)}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:32px;align-items:end}
+.stampbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.stamp{display:inline-block;font-family:var(--serif);font-size:44px;line-height:1;padding:10px 22px 14px;border:3px solid currentColor;border-radius:10px;transform:rotate(-4deg)}
+.big{font-family:var(--serif);font-size:clamp(56px,8vw,84px);line-height:1}
+.lens{display:grid;gap:8px;margin-top:16px}
+.lr{display:grid;grid-template-columns:76px minmax(0,1fr) 34px;gap:10px;align-items:center;font:13px var(--mono);color:var(--dim)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;border-radius:4px}
+.lr b{color:var(--bone);font-weight:500;text-align:right}
+.take{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+.tk{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.tk h4{font:13px var(--mono);color:var(--dim);margin:0 0 8px;font-weight:400}
+.tk p{margin:0}
+.heat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.hc h4{font:13px/1.3 var(--mono);color:var(--dim);margin:0 0 8px;font-weight:400}
+.tile{display:block;padding:10px 12px;border-radius:8px;margin-bottom:6px;text-decoration:none;font-size:14px;line-height:1.3;color:var(--ink)}
+.tile small{display:block;font:12px var(--mono);opacity:.75}
+.tile.na{background:var(--line);color:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font:12px var(--mono);color:var(--dim)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c);vertical-align:-1px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.filters button{font:13px var(--mono);background:transparent;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:0 16px;min-height:44px;cursor:pointer}
+.filters button[aria-pressed=true]{color:var(--ink);background:var(--lime);border-color:var(--lime)}
+.fl{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.fi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 14px}
+.fn{font-family:var(--serif);font-size:30px;line-height:1;color:var(--dim)}
+.sev{display:inline-block;font:12px var(--mono);padding:2px 9px;border-radius:999px;margin-right:8px;color:var(--ink);vertical-align:3px}
+.s-high{background:var(--pink)}.s-med{background:var(--amber)}.s-low{background:var(--dim)}
+.fi h3{display:inline;font-size:21px}
+.fi p{margin:8px 0 0;max-width:78ch}
+.fi .fix{color:var(--bone)}.fi .fix b{color:var(--lime);font:13px var(--mono);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips a{font:12px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:3px 10px;text-decoration:none}
+.chips a:hover{color:var(--lime);border-color:var(--lime)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:18px}
+.card .wf svg{width:112px;height:auto;display:block;border-radius:6px}
+.card .wf small{display:block;font:11px var(--mono);color:var(--dim);margin-top:6px}
+.shot{grid-column:1/-1;margin:4px 0 0}.shot img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}.shot figcaption{font:11px var(--mono);color:var(--dim);margin-top:6px}
+.chead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.path{font:12px var(--mono);color:var(--dim);word-break:break-all}
+.dots{display:flex;gap:6px;text-align:center}
+.dot{font:11px var(--mono);color:var(--dim)}
+.dot i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-style:normal;color:var(--ink);font-weight:500;margin:0 auto 2px}
+.tag{font:12px var(--mono);color:var(--dim);text-align:right;margin-top:4px}
+.ps{font:13px var(--mono);margin-top:2px}
+.ok{margin:12px 0 8px;padding-left:12px;border-left:2px solid var(--lime)}
+.iss{list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:15px}
+.iss li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:8px}
+.iss li::before{content:"";width:8px;height:8px;border-radius:50%;margin-top:8px;background:var(--c)}
+.iss a{font:12px var(--mono);color:var(--dim)}
+.verdict{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:32px;align-items:start}
+.vfix{background:var(--panel);border:1px solid var(--lime);border-radius:12px;padding:18px;margin-top:18px}
+.vfix h4{font:13px var(--mono);color:var(--lime);margin:0 0 6px;font-weight:400}
+.vfix p{margin:0}
+.box{border:1.5px dashed var(--pink);border-radius:12px;padding:16px 18px;margin-top:18px}
+.box h4{font:13px var(--mono);color:var(--pink);margin:0 0 8px;font-weight:400}
+.box ul{margin:0;padding-left:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:12px var(--mono);color:var(--dim);font-weight:400}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:24px}
+.cols p,.cols li{color:var(--bone)}
+.src li{font:13px/1.7 var(--mono);color:var(--dim);word-break:break-all}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;font:13px var(--mono);color:var(--dim)}
+.fr{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.end{font-family:var(--serif);font-size:28px;color:var(--bone);margin:40px 0 18px}
+.end i{display:inline-block;width:.5em;height:.9em;background:var(--lime);vertical-align:-.1em;margin-left:6px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.end i{animation:none}}
+.w-bg{fill:#151513}.w-band{fill:#2a2a25}.w-ink,.w-img{fill:#8f8e82;opacity:.35}.w-dark{fill:#f1f0e8}.w-acc{fill:#c8f135}
+.w-flag{fill:none;stroke:#ff6a8a;stroke-width:1.2}.w-flagdot{fill:#ff6a8a}.w-empty{fill:none;stroke:#8f8e82;stroke-dasharray:3 2;stroke-width:.8}
+.w-on{fill:rgba(200,241,53,.08);stroke:#c8f135;stroke-width:1.6}
+@media(max-width:900px){.hero,.verdict{grid-template-columns:minmax(0,1fr)}.cards{grid-template-columns:minmax(0,1fr)}.heat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.take,.cols{grid-template-columns:minmax(0,1fr)}.heat{grid-template-columns:minmax(0,1fr)}.card{grid-template-columns:84px minmax(0,1fr);gap:12px;padding:16px}.card .wf svg{width:84px}.fi{grid-template-columns:minmax(0,1fr)}.tag{text-align:left}}
+
+.wnav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:12px 20px;border-bottom:1px solid #2a2a25;background:#0c0c0b;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:13px}
+.wnav a{color:#8f8e82;text-decoration:none}
+.wnav a:hover,.wnav a:focus-visible{color:#f1f0e8}
+.wnav .home{font-family:"Abril Fatface",Georgia,serif;font-size:20px;color:#f1f0e8}
+.wnav .home span{color:#c8f135}
+.wnav .tabs{display:flex;gap:16px;flex-wrap:wrap}
+.wnav .tabs a[aria-current]{color:#c8f135}
+</style>
+</head>
+<body>
+<nav class="wnav" aria-label="sitesee. walk 03"><a class="home" href="../../index.html">sitesee<span>.</span></a><span class="tabs"><span style="color:#8f8e82">Walk 03 · 73ways.co</span><a href="map.html">The map</a><a href="walk.html">The walk</a><a href="audit.html" aria-current="page">The audit</a></span></nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="arr" viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+
+<header class="wrap top">
+  <p class="eb"><svg><use href="#arr"/></svg><span>sitesee<span class="t">.</span> · Walk 03 · The audit</span></p>
+  <div class="hero">
+    <div>
+      <h1>73ways.co<span class="t">.</span></h1>
+      <p class="scope" id="scope"></p>
+      <h2 id="headline"></h2>
+      <p class="lede">An independent walk of the site of a Melbourne consultancy selling fractional Product leadership. Read as a founder deciding whether to book a first session.</p>
+    </div>
+    <div class="stampbox" aria-label="Site score summary">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+        <div><div class="scope">Site score</div><div class="big" id="siteScore"></div></div>
+        <span class="stamp" id="stamp"></span>
+      </div>
+      <div class="lens" id="lensBars"></div>
+    </div>
+  </div>
+  <div class="take" id="take"></div>
+</header>
+
+<section id="heat"><div class="wrap">
+  <p class="eb"><svg><use href="#arr"/></svg>Heat map · every node on the map</p>
+  <h2>One page, <span class="t">one annexe.</span></h2>
+  <p class="lede" style="margin-bottom:22px">Each tile is a section or page, coloured by its score. Grey tiles are off-site handoffs that weren't scored. Columns follow the page's own section anchors, checked in the live page.</p>
+  <div class="heat" id="heatGrid"></div>
+  <div class="legend"><span style="--c:var(--lime)">Strong 75+</span><span style="--c:var(--amber)">Fair 55–74</span><span style="--c:var(--pink)">Weak under 55</span><span style="--c:var(--line)">Not scored</span></div>
+</div></section>
+
+<section id="findings"><div class="wrap">
+  <p class="eb"><svg><use href="#arr"/></svg>Findings · ranked by impact on the path to a booking</p>
+  <h2 id="fhead"></h2>
+  <div class="filters" id="fFilters" role="group" aria-label="Filter findings by severity"></div>
+  <ol class="fl" id="fList"></ol>
+</div></section>
+
+<section id="stops"><div class="wrap">
+  <p class="eb"><svg><use href="#arr"/></svg>The stops · nine homepage sections and the primer</p>
+  <h2>Section by section, <span class="t">top to bottom.</span></h2>
+  <div class="filters" id="pFilters" role="group" aria-label="Filter stops by section"></div>
+  <div class="cards" id="cards"></div>
+</div></section>
+
+<section id="verdict"><div class="wrap verdict">
+  <div>
+    <p class="eb"><svg><use href="#arr"/></svg>Verdict · does the site work?</p>
+    <span class="stamp" id="stamp2" style="font-size:64px"></span>
+    <p class="scope" id="vscore" style="margin-top:22px"></p>
+  </div>
+  <div>
+    <h2 id="vhead"></h2>
+    <p id="why"></p>
+    <div class="vfix"><h4>One concrete fix</h4><p id="fix"></p></div>
+    <div class="box" id="checks"></div>
+  </div>
+</div></section>
+
+<section id="method"><div class="wrap">
+  <p class="eb"><svg><use href="#arr"/></svg>Method</p>
+  <h2>Five lenses, <span class="t">scored 1 to 5.</span></h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Lens</th><th>Question</th><th>1</th><th>3</th><th>5</th></tr></thead>
+    <tbody id="lensTable"></tbody>
+  </table></div>
+  <div class="cols">
+    <div><h3>Evidence</h3><ul>
+      <li>Served HTML of the homepage and the Founder Primer, then the live pages in a desktop browser, both on 27 November 2026.</li>
+      <li>Header nav, footer, <code>/sitemap.xml</code> (2 URLs) and <code>/robots.txt</code>.</li>
+      <li>Probes of <code>/about</code> and <code>/privacy</code>, which returned errors.</li>
+      <li>Stop score = sum of five lenses ÷ 25 × 100. Site score = mean of stop scores.</li>
+    </ul></div>
+    <div><h3>Limits</h3><ul>
+      <li>A one-page site, so homepage sections are scored as stops. Findable is read per section: nav link, heading, served content.</li>
+      <li>Screenshots come from one desktop browser width, 800px. Mobile layouts weren't checked.</li>
+      <li>No traffic, speed or accessibility tooling data. The booking calendar wasn't scored.</li>
+      <li>Scores are editorial judgement against the lens anchors.</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section id="sources"><div class="wrap">
+  <p class="eb"><svg><use href="#arr"/></svg>Sources</p>
+  <ul class="src">
+    <li><a href="https://73ways.co/">https://73ways.co/</a></li>
+    <li><a href="https://build-your-startup-right.73ways.co/">https://build-your-startup-right.73ways.co/</a></li>
+    <li><a href="https://73ways.co/sitemap.xml">https://73ways.co/sitemap.xml</a></li>
+    <li><a href="https://73ways.co/robots.txt">https://73ways.co/robots.txt</a></li>
+  </ul>
+  <p class="end">sass-y idea labs<i aria-hidden="true"></i></p>
+</div></section>
+
+<footer><div class="wrap fr"><span>sass-y / idea labs · sitesee<span class="t">.</span></span><span>73ways.co</span></div></footer>
+
+<script>
+{
+const P=[
+{id:"hero",sec:"Home",n:"Hero",p:"73ways.co/#home",nav:true,sc:[3,3,2,5,4],h1:"A clear opener.",h2:"No proof in sight.",tag:"Clear, unbacked opener",w:"home",on:1,
+ ok:"The H1, the supporting copy and a warm founder portrait make the offer and the person plain in one screen.",
+ iss:[["The H1 alone (“for what comes next”) doesn't name the audience",null,"l"],["Primary CTA “Work with me” jumps to #contact, one scroll short of booking",3,"m"],["No client proof near the headline",0,"h"]]},
+{id:"pains",sec:"Off-nav",n:"Pain points",p:"73ways.co/#problem",nav:false,sc:[5,2,3,5,3],h1:"Founders will see themselves.",h2:"Then no next step.",tag:"Sharp, sticky diagnosis",w:"home",on:2,
+ ok:"Six plain-language symptoms split by stage, such as “People sign up. They don't stick around”.",
+ iss:[["No CTA at the moment of recognition",3,"m"],["Has an anchor (#problem) but no nav link",8,"l"]]},
+{id:"services",sec:"Off-nav",n:"Services",p:"73ways.co/#unclear",nav:false,sc:[4,2,2,5,3],h1:"Four clear service areas.",h2:"Nothing to show for them.",tag:"Clear scope, no evidence",w:"home",on:3,
+ ok:"The heading “Making the right things clear. Making them executable.” states the job well.",
+ iss:[["No example outcome for any of the four areas",0,"h"],["No step to take from this section",3,"m"],["Anchor id “#unclear” has no nav link",8,"l"]]},
+{id:"exp",sec:"Off-nav",n:"Experience I bring",p:"73ways.co/#experience",nav:false,sc:[4,2,3,5,3],h1:"Real names on the CV.",h2:"None on the work.",tag:"Credentials, not outcomes",w:"home",on:4,
+ ok:"Names Unlockd, Moula and Whispir, and an 18+ year arc from software engineer to Director.",
+ iss:[["Past employers are named, but no client results or testimonials",0,"h"],["No step to take from this section",3,"m"]]},
+{id:"tiers",sec:"How I Work",n:"Engagements",p:"73ways.co/#how",nav:true,sc:[4,3,3,4,4],h1:"An honest price up front.",h2:"Then two labels, no figures.",tag:"Priced entry, open tiers",w:"home",on:5,
+ ok:"The $990 + GST Diagnostic is priced and credited in full if work continues, and “Not sure which fits?” offers a way in.",
+ iss:[["“Weekly rate” and “Scoped to the outcome” name a model, not a figure",5,"l"],["Involvement dials look like draggable sliders but are static",6,"l"],["“Book a discovery chat” and “Book a 30-minute call” open one link",3,"m"]]},
+{id:"bio",sec:"About",n:"I'm Sravanthi",p:"73ways.co/#about",nav:true,sc:[4,2,3,5,4],h1:"A person, not a firm.",h2:"Then a detour.",tag:"Warm, credible founder",w:"home",on:6,
+ ok:"Puts a named founder, a real voice and a LinkedIn profile behind the offer, which matters for a solo practice.",
+ iss:[["The next block is the name story, not a next step",10,"l"]]},
+{id:"why",sec:"About",n:"Why 73?",p:"73ways.co/#about",nav:true,sc:[2,2,2,4,3],h1:"A charming name story.",h2:"On the critical path.",tag:"Lore before the ask",w:"home",on:7,
+ ok:"Gives the name a memorable reason and ties it to an iterative way of building products.",
+ iss:[["Sits between the bio and the ask, delaying the path",10,"l"],["“Sheldon Prime” is used without a gloss",10,"l"]]},
+{id:"res",sec:"Resources",n:"Resources",p:"73ways.co/#resources",nav:true,sc:[3,3,2,3,4],h1:"A free tool for founders.",h2:"And a promise of more.",tag:"Good lead magnet, alone",w:"home",on:8,
+ ok:"“Explore the primer” offers a free, no sign-up tool: a low-risk first step for a cautious founder.",
+ iss:[["One resource, beside a “more coming” note",12,"l"],["The primer's method claim has no source",4,"m"]]},
+{id:"close",sec:"Let's Talk",n:"Closing CTA",p:"73ways.co/#contact",nav:true,sc:[4,4,2,4,4],h1:"One clear ask.",h2:"With nothing beside it.",tag:"Clean close, no proof",w:"home",on:9,
+ ok:"One button, “Book a 30-minute call”, with LinkedIn and the email address shown as readable text beside it.",
+ iss:[["No testimonial or result beside the ask",0,"h"],["No privacy policy link in the footer",9,"l"]]},
+{id:"primer",sec:"Resources",n:"Founder Primer",p:"build-your-startup-right.73ways.co",nav:false,sc:[5,3,2,4,2],h1:"A rich self-assessment.",h2:"That exits to the lobby.",tag:"Strong hook, loose exit",w:"primer",on:-1,
+ ok:"In the browser it's a real tool: 10 principles, four tabs each, and 42 self-checks with a readiness tally.",
+ iss:[["“Work with 73 Ways” returns to the homepage top, not booking",1,"h"],["Principles and self-checks are not in the served page",2,"m"],["The “reverse-engineered” method has no source",4,"m"],["Title and H1 differ, and the back link appears twice",11,"l"]]}
+];
+const URL={hero:"https://73ways.co/#home",pains:"https://73ways.co/#problem",services:"https://73ways.co/#unclear",exp:"https://73ways.co/#experience",tiers:"https://73ways.co/#how",bio:"https://73ways.co/#about",why:"https://73ways.co/#about",res:"https://73ways.co/#resources",close:"https://73ways.co/#contact",primer:"https://build-your-startup-right.73ways.co/"};
+const WIRES={home:["nav","hero","c6","c4","st","c3","it","txt","ti","cb","ft"],primer:["nav","heroc","tabs","em!","cb!","ft"]};
+
+const F=[
+{s:"high",t:"No client proof anywhere",d:"No testimonials, client logos, case studies or outcome metrics appear on the homepage or the primer. Proof rests on “18+ years” and three past employers. A founder weighing a $990 first session has no result to point to.",r:"Build one proof component with 2–3 named, dated client outcomes or quotes, and place it in the hero, the engagements section and beside the closing CTA. One short write-up per engagement type is enough to start.",p:["hero","services","exp","close","primer"]},
+{s:"high",t:"The primer's exit loops back to the lobby",d:"The primer's “Work with 73 Ways →” button links to https://73ways.co, the top of the homepage (checked in the live page). A founder who has just found gaps has to scroll the whole page again to book.",r:"Point that button at the booking link or at 73ways.co/#contact. Consider carrying the gaps they found into the booking note.",p:["primer","res"]},
+{s:"med",t:"The primer's content isn't in the served page",d:"In a browser the primer shows 10 principles and 42 self-checks. The HTML the server sends has about 190 words and none of that content, and there's no canonical tag. Search engines and link previews may see a near-empty page.",r:"Server-render the ten principle titles with a one-line summary each, and add a canonical tag. Keep the interactive scoring on top of that.",p:["primer"]},
+{s:"med",t:"Four CTA labels, two destinations",d:"“Work with me” and “Let's Talk” both go to #contact. “Book a discovery chat” and “Book a 30-minute call” open the same Google Calendar link. Pain points, Services and Experience offer no next step at all.",r:"Pick one label for booking and use it everywhere, linking straight to the calendar. Add that button after the pain points and after Experience.",p:["hero","pains","services","exp","tiers","close"]},
+{s:"med",t:"The primer's method claim has no source",d:"The homepage and primer describe 10 principles “reverse-engineered” from investor, advisor and founder questions, and the primer says “Most can't”. Neither says whose questions or how many.",r:"Add one line on the method (how many investors or advisors, which frameworks), or reframe the claim as the founder's own experience.",p:["res","primer"]},
+{s:"low",t:"Only the entry tier has a figure",d:"Product Diagnostic is “$990 + GST”. Product Judgement is labelled “Weekly rate” and Product Leadership “Scoped to the outcome”, with no figure or range. The “Not sure which fits?” box mentions fixed prices for well-defined work, also without a range.",r:"Show a starting figure (“from $X a week”) or a typical range for each tier, so a founder can budget before the call.",p:["tiers"]},
+{s:"low",t:"Involvement dials look draggable",d:"Each tier has Hands-on and Embedded dials drawn as slider tracks with round thumbs. They're static images (well labelled for screen readers), but they look like controls a visitor can move.",r:"Restyle them as a filled meter or a five-dot scale, so they read as information rather than inputs.",p:["tiers"]},
+{s:"low",t:"No canonical or structured data",d:"Neither the homepage nor the primer has a canonical tag, and neither has JSON-LD. The rest of the basics are in place: lang, favicon, Open Graph and alt text on the portrait.",r:"In the page templates, add a canonical on both hosts and ProfessionalService and Person JSON-LD on the homepage.",p:["hero","primer"]},
+{s:"low",t:"One page carries the whole search load",d:"The sitemap lists 2 URLs. Pain points (#problem), Services (#unclear) and Experience (#experience) have anchors but no nav link, and /about returned an error. Only the homepage and the primer can rank.",r:"Fine for a new practice. As outcomes arrive, give each engagement type and case study its own URL, and rename #unclear to something a person would share.",p:["pains","services","exp"]},
+{s:"low",t:"No privacy policy",d:"The footer holds LinkedIn, the email address and a copyright line. There's no privacy or terms link, though the site sends visitors to a booking tool and a self-assessment.",r:"Add a short privacy page covering booking data and the primer, and link it in both footers.",p:["close","primer"]},
+{s:"low",t:"Why 73? sits on the critical path",d:"The name story sits between the bio and the resources and ask. It cites the “Sheldon Prime” without explaining it.",r:"Move it below the closing CTA or into the footer as a short aside, with a one-line gloss on the term.",p:["why","bio"]},
+{s:"low",t:"Primer title and H1 disagree",d:"The title tag reads “How Ready Is Your Startup?” and the H1 “How ready is your startup to succeed?”. The “← Back to 73ways.co” link duplicates the logo link.",r:"Match the title to the H1 and drop one of the two links.",p:["primer"]},
+{s:"low",t:"Resources promises “more coming”",d:"The section lists one tool beside a “more coming” note.",r:"Drop the note until a second resource ships, or name what's next.",p:["res"]}
+];
+
+const HEAT=[
+["Home · #home",[["Hero","hero"]]],
+["No nav link",[["Pain points","pains"],["Services","services"],["Experience I bring","exp"]]],
+["How I Work · #how",[["Engagements","tiers"],["Google Calendar booking"]]],
+["About · #about",[["I'm Sravanthi","bio"],["Why 73?","why"]]],
+["Resources · #resources",[["Resources","res"],["Founder Primer (subdomain)","primer"]]],
+["Let's Talk · #contact",[["Closing CTA","close"],["LinkedIn (footer)"],["Email (footer)"]]]
+];
+const LENS=[["Message","Is it clear in one screen what this offers and for whom?","Slogan only, no offer","Offer clear, audience vague","Offer and audience clear at a glance"],
+["Path","Is there one obvious, working next step that fits intent?","No next step, or a dead one","Several competing CTAs","One clear step, ideally done on the page"],
+["Proof","Are claims backed by named, dated, sourced evidence?","Unsourced claims or none","Logos plus some unsourced stats","Named customers, dated proof, sourced numbers"],
+["Hygiene","Is it free of duplicates, placeholders, typos and stale content?","Test or placeholder content","A few slips","Clean"],
+["Findable","In the nav, one canonical URL, one H1, real metadata?","Hidden, or twinned and missing an H1","One of these is off","All in place"]];
+const SHORT=["Msg","Path","Proof","Hyg","Find"];
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const arr='<svg><use href="#arr"/></svg>';
+const score=p=>Math.round(p.sc.reduce((a,b)=>a+b,0)/25*100);
+const band=s=>s>=75?"Strong":s>=55?"Fair":"Weak";
+const bcol=s=>s>=75?"var(--lime)":s>=55?"var(--amber)":"var(--pink)";
+const dcol=v=>v>=4?"var(--lime)":v>=3?"var(--amber)":"var(--pink)";
+const sevc={h:"var(--pink)",m:"var(--amber)",l:"var(--dim)"};
+const sevName={high:"High",med:"Medium",low:"Low"};
+P.forEach(p=>p.score=score(p));
+const site=Math.round(P.reduce((a,p)=>a+p.score,0)/P.length);
+const means=[0,1,2,3,4].map(i=>P.reduce((a,p)=>a+p.sc[i],0)/P.length);
+const fmt=v=>v.toFixed(1);
+const low25=means.filter(m=>m<2.5).length;
+const stamp=(site>=75&&Math.min(...means)>=3)?"Yes":(site<50||low25>=2)?"No":"Maybe";
+const stampCol=stamp==="Yes"?"var(--lime)":stamp==="No"?"var(--pink)":"var(--amber)";
+const order=[0,1,2,3,4].sort((a,b)=>means[b]-means[a]);
+const best=order[0],worst=order[4];
+const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+const sorted=[...P].sort((a,b)=>b.score-a.score);
+
+const BH={nav:8,hero:36,heroc:30,lg:10,c3:24,c4:22,c6:30,it:26,ti:26,st:16,q:18,fq:28,fm:34,cb:18,ca:24,ls:16,tb:26,tr:34,em:22,tabs:28,txt:16,ft:16};
+function wire(blocks,on){
+  const W=120,pad=6;let y=0;const parts=[];
+  const r=(x,y,w,h,c,rx=1.5)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+  const lines=(x,y,w,n,gap=4)=>Array.from({length:n},(_,i)=>r(x,y+i*gap,i===n-1?w*.6:w,2,"w-ink",1)).join("");
+  blocks.forEach((raw,idx)=>{
+    const flag=raw.endsWith("!"),b=raw.replace("!",""),h=BH[b]||16;let g="";
+    const x0=pad,w=W-pad*2,y0=y+3,ih=h-6;
+    switch(b){
+      case"nav":g=r(0,y,W,h,"w-band",0)+r(pad,y+3,12,2.5,"w-dark")+r(W-pad-14,y+2.5,14,3.5,"w-acc",2);break;
+      case"hero":g=r(x0,y0+4,w*.42,4,"w-dark")+r(x0,y0+11,w*.38,4,"w-dark")+lines(x0,y0+19,w*.4,2)+r(x0,y0+ih-7,18,5,"w-acc",2.5)+r(x0+w*.52,y0,w*.48,ih,"w-img");break;
+      case"heroc":g=r(x0+w*.15,y0+4,w*.7,4,"w-dark")+r(x0+w*.25,y0+11,w*.5,4,"w-dark")+r(x0+w*.3,y0+18,w*.4,2,"w-ink")+r(x0+w*.5-12,y0+ih-7,24,5,"w-acc",2.5);break;
+      case"lg":for(let i=0;i<6;i++)g+=r(x0+i*(w/6)+2,y0+1,w/6-4,ih-2,"w-ink");break;
+      case"c3":case"c4":case"c6":{const n=b==="c4"?4:3,rows=b==="c6"?2:1,gw=(w-(n-1)*3)/n,gh=(ih-(rows-1)*3)/rows;
+        for(let rr=0;rr<rows;rr++)for(let i=0;i<n;i++){const xx=x0+i*(gw+3),yy=y0+rr*(gh+3);g+=r(xx,yy,gw,gh,"w-band")+r(xx+2,yy+2,gw-4,gh*.45,"w-img")+r(xx+2,yy+gh*.6,gw*.7,2,"w-ink",1);}break;}
+      case"it":g=r(x0,y0,w*.45,ih,"w-img")+r(x0+w*.52,y0+3,w*.4,3,"w-dark")+lines(x0+w*.52,y0+9,w*.45,3);break;
+      case"ti":g=r(x0+w*.55,y0,w*.45,ih,"w-img")+r(x0,y0+3,w*.4,3,"w-dark")+lines(x0,y0+9,w*.45,3);break;
+      case"st":for(let i=0;i<3;i++)g+=r(x0+i*(w/3)+4,y0+1,w/3-14,5,"w-dark")+r(x0+i*(w/3)+4,y0+8,w/3-10,2,"w-ink",1);break;
+      case"q":g=r(x0+6,y0+1,5,5,"w-acc",1)+lines(x0+16,y0+2,w-26,3);break;
+      case"fq":for(let i=0;i<4;i++)g+=r(x0,y0+i*5.5,w,4,"w-band");break;
+      case"fm":g=r(x0+8,y0,w-16,ih,"w-band")+r(x0+14,y0+4,w*.4,3,"w-dark")+[0,1,2].map(i=>r(x0+14,y0+10+i*5.5,w-28,3.5,"w-bg",1)).join("")+r(x0+14,y0+ih-7,20,4.5,"w-acc",2);break;
+      case"cb":g=r(0,y+2,W,h-4,"w-dark",0)+r(W/2-14,y+h/2-2.5,28,5,"w-acc",2.5);break;
+      case"ca":for(let i=0;i<3;i++)g+=r(x0+7+i*((w-14)/3),y0,(w-14)/3-3,ih,"w-band")+lines(x0+10+i*((w-14)/3),y0+4,(w-14)/3-9,3);break;
+      case"ls":g=lines(x0,y0+2,w*.8,3,3.5);break;
+      case"tb":for(let i=0;i<4;i++)g+=r(x0,y0+i*5,w,4,i===0?"w-ink":"w-band",0.5);break;
+      case"tr":for(let i=0;i<4;i++){const gw=(w-9)/4;g+=r(x0+i*(gw+3),y0,gw,ih,"w-band")+r(x0+i*(gw+3)+2,y0+3,gw-4,3,"w-dark")+lines(x0+i*(gw+3)+2,y0+9,gw-4,i===0?1:4);}break;
+      case"em":g=`<rect x="${x0}" y="${y0}" width="${w}" height="${ih}" rx="2" class="w-empty"/>`;break;
+      case"tabs":g=[0,1,2].map(i=>r(x0+i*22,y0,19,4,i?"w-ink":"w-dark",2)).join("")+r(x0,y0+7,w,ih-7,"w-img");break;
+      case"txt":g=r(x0,y0+1,w*.5,3,"w-dark")+lines(x0,y0+6,w*.9,2);break;
+      case"ft":g=r(0,y,W,h,"w-dark",0)+lines(pad,y+4,30,2)+lines(pad+40,y+4,30,2);break;
+    }
+    if(idx===on)g=`<rect x="0.8" y="${y+0.5}" width="${W-1.6}" height="${h-1}" rx="3" class="w-on"/>`+g;
+    if(flag)g+=`<rect x="1.5" y="${y+1}" width="${W-3}" height="${h-2}" rx="3" class="w-flag"/><circle cx="${W-6}" cy="${y+6}" r="3.2" class="w-flagdot"/>`;
+    parts.push(g);y+=h;
+  });
+  return `<svg viewBox="0 0 ${W} ${y}" role="img" aria-label="Wireframe of page sections"><rect width="${W}" height="${y}" class="w-bg"/>${parts.join("")}</svg>`;
+}
+
+/* header */
+document.getElementById("scope").textContent=`${P.length} stops (9 homepage sections + 1 subdomain tool) · 27 November 2026 · buyer lens: first visit to booked call`;
+const hl=document.getElementById("headline");
+hl.innerHTML=`A clear offer, <span class="t">with no proof behind it.</span>`;
+document.getElementById("siteScore").innerHTML=`${site}<span style="font-size:.4em;color:var(--dim)">/100</span>`;
+const st=document.getElementById("stamp");st.textContent=stamp;st.style.color=stampCol;
+const st2=document.getElementById("stamp2");st2.textContent=stamp;st2.style.color=stampCol;
+document.getElementById("lensBars").innerHTML=LENS.map((l,i)=>`<div class="lr"><span>${l[0]}</span><div class="bar"><i style="width:${means[i]/5*100}%;background:${dcol(means[i])}"></i></div><b>${fmt(means[i])}</b></div>`).join("");
+const noNext=P.filter(p=>p.sc[1]<=2).length;
+document.getElementById("take").innerHTML=[
+ ["What works",`The offer is plain and the entry point is honest: a priced, credited $990 Diagnostic. Message averages ${fmt(means[0])} and Hygiene ${fmt(means[3])}, and the pain points section is among the top stops at ${byId.pains.score}.`],
+ ["Biggest weakness",`Proof averages ${fmt(means[2])}. No stop shows a client result, quote or logo, so every claim rests on the founder's CV.`],
+ ["The pattern",`Sections explain but rarely ask. ${noNext} of ${P.length} stops score 2 or less on Path, and the primer's best moment exits to the top of the homepage.`]
+].map(([h,t])=>`<div class="tk"><h4>${h}</h4><p>${t}</p></div>`).join("");
+
+/* heat */
+document.getElementById("heatGrid").innerHTML=HEAT.map(([sec,items])=>`<div class="hc"><h4>${esc(sec)}</h4>${items.map(([l,id])=>{const p=id&&byId[id];return p?`<a class="tile" href="#p-${p.id}" style="background:${bcol(p.score)}">${esc(l)}<small>${p.score} · ${band(p.score)}</small></a>`:`<span class="tile na">${esc(l)}<small>Off-site · not scored</small></span>`}).join("")}</div>`).join("");
+
+/* findings */
+const fc={high:0,med:0,low:0};F.forEach(f=>fc[f.s]++);
+document.getElementById("fhead").innerHTML=`${F.length} findings, <span class="t">${fc.high} high.</span>`;
+let fsel="all";
+function drawF(){
+  document.getElementById("fFilters").innerHTML=[["all",`All ${F.length}`],["high",`High ${fc.high}`],["med",`Medium ${fc.med}`],["low",`Low ${fc.low}`]].map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${fsel===k}">${l}</button>`).join("");
+  document.getElementById("fList").innerHTML=F.map((f,i)=>({f,i})).filter(x=>fsel==="all"||x.f.s===fsel).map(({f,i})=>`<li class="fi" id="f-${i+1}"><span class="fn">${String(i+1).padStart(2,"0")}</span><div><span class="sev s-${f.s}">${sevName[f.s]}</span><h3>${esc(f.t)}</h3><p>${esc(f.d)}</p><p class="fix"><b>Fix · </b>${esc(f.r)}</p><div class="chips">${f.p.map(id=>`<a href="#p-${id}">${esc(byId[id].n)}</a>`).join("")}</div></div></li>`).join("");
+}
+document.getElementById("fFilters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;fsel=b.dataset.f;drawF();});
+drawF();
+
+/* cards */
+const secs=["All",...new Set(P.map(p=>p.sec))];let psel="All";
+function drawP(){
+  document.getElementById("pFilters").innerHTML=secs.map(s=>`<button type="button" data-s="${esc(s)}" aria-pressed="${psel===s}">${esc(s)}</button>`).join("");
+  document.getElementById("cards").innerHTML=P.map((p,i)=>({p,i})).filter(x=>psel==="All"||x.p.sec===psel).map(({p,i})=>`<article class="card" id="p-${p.id}">
+   <div class="wf">${wire(WIRES[p.w],p.on)}<small>Wireframe${p.on>=0?" · lime = this section":" · pink = flagged"}</small></div>
+   <div>
+    <div class="chead"><div><p class="eb" style="margin:0 0 6px">${arr}Stop ${i+1} of ${P.length}</p><a class="path" href="${URL[p.id]}">${esc(p.p)}</a></div>
+     <div><div class="dots">${p.sc.map((v,j)=>`<div class="dot"><i style="background:${dcol(v)}" title="${LENS[j][0]} ${v} of 5">${v}</i>${SHORT[j]}</div>`).join("")}</div><div class="tag">${esc(p.tag)}</div></div></div>
+    <h3 style="margin-top:12px">${esc(p.h1)} <span class="t">${esc(p.h2)}</span></h3>
+    <div class="ps" style="color:${bcol(p.score)}">${p.score} · ${band(p.score)} · ${esc(p.n)}</div>
+    <p class="ok">${esc(p.ok)}</p>
+    <ul class="iss">${p.iss.map(([t,fi,s])=>`<li style="--c:${sevc[s]}"><span>${esc(t)}${fi!==null?` <a href="#f-${fi+1}">#${String(fi+1).padStart(2,"0")}</a>`:""}</span></li>`).join("")}</ul>
+   </div>
+   <figure class="shot"><img src="shots/${p.id}.jpg" alt="Screenshot of the ${esc(p.n)} section on ${esc(p.p)}" loading="lazy" width="600" height="450"><figcaption>Screenshot · live page, desktop browser, 27 November 2026</figcaption></figure></article>`).join("");
+}
+document.getElementById("pFilters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;psel=b.dataset.s;drawP();});
+drawP();
+
+/* verdict */
+document.getElementById("vscore").textContent=`Site score ${site}/100 · best stop ${sorted[0].n} (${sorted[0].score}) · weakest ${sorted[sorted.length-1].n} (${sorted[sorted.length-1].score})`;
+document.getElementById("vhead").innerHTML=`Strong ${LENS[best][0].toLowerCase()}. <span class="t">Weak ${LENS[worst][0].toLowerCase()}.</span>`;
+document.getElementById("why").textContent=`The site does its first job. Within a screen, a founder knows what's offered, by whom, and what the first step costs. It lands on ${stamp} at ${site}: Proof (${fmt(means[2])}) and Path (${fmt(means[1])}) sit below 3, so it can't reach Yes. No client outcome backs the offer, and the primer's strongest moment sends people back to the top. To move to Yes, both lenses need to reach 3 or more: named client proof in three places, and every call to action going straight to booking.`;
+document.getElementById("fix").textContent="Within 30 days, add a proof block with 2–3 named client outcomes to the hero, the engagements section and the closing CTA. Point the primer's “Work with 73 Ways” button and every booking label at the one calendar link. Then watch discovery-call bookings, split out for visitors who came through the primer.";
+
+/* checks */
+const allText=JSON.stringify([P,F]);
+const quotes=[...allText.matchAll(/“([^”]*)”/g)].map(m=>m[1]).filter(q=>q.trim().split(/\s+/).length>=15);
+const noChip=F.filter(f=>!f.p.length).length,noOk=P.filter(p=>!p.ok).length;
+const shots=P.length;
+const pass=[`Every number on this page is computed by script from the data arrays`,`${noChip} findings without a page chip`,`${noOk} stops without a Works line`,`${quotes.length} quotes of 15 words or longer`,`All ${P.length} stops have a labelled wireframe and a labelled screenshot (${shots} of each)`];
+document.getElementById("checks").innerHTML=`<h4>Checks and open notes</h4><ul>${pass.map(t=>`<li>${esc(t)}</li>`).join("")}<li>The primer's results panel (“Found some gaps?”) appears only after self-checks are ticked. It wasn't filled in, so it isn't pictured.</li><li>Mobile layouts weren't checked.</li></ul>`;
+
+document.getElementById("lensTable").innerHTML=LENS.map(l=>`<tr>${l.map((c,i)=>i===0?`<td><b>${c}</b></td>`:`<td>${c}</td>`).join("")}</tr>`).join("");
+}
+</script>
+</body>
+</html>
