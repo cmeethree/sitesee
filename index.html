@@ -55,7 +55,7 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;paddin
 <p class="eb"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 5v8H5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>sass-y idea labs</p>
 <h1>sitesee<span>.</span></h1>
 <p class="tagline">walk the site<span class="l">.</span></p>
-<p class="lede">Each walk takes one public website on foot, page by page, the way a buyer would. We map it, turn it into a city you can tour, and score 25 to 30 pages on five lenses. Every walk ends in a Yes, Maybe or No, and one concrete fix.</p>
+<p class="lede">Each walk takes one public website on foot, page by page, the way a buyer would. We map it, turn it into a city you can tour, and score up to 30 pages on five lenses. Every walk ends in a Yes, Maybe or No, and one concrete fix.</p>
 <div class="what">
 <div><b>The map</b><p>Every nav section, off-nav page, subdomain and locale, each linked to its live page.</p></div>
 <div><b>The walk</b><p>The site as a 3D city with a guided tour. Taller buildings are pages the site pushes harder.</p></div>
@@ -75,12 +75,13 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;paddin
 {
 // Newest first. Add a row here for each new walk, with its folder under walks/.
 const WALKS=[
+{n:"Walk 03",site:"73ways.co",dir:"walks/73ways/",when:"November 2026",pages:10,unit:"stops",score:66,stamp:"Maybe",hl:"A clear offer, with no proof behind it.",pieces:["map","walk","audit"]},
 {n:"Walk 02",site:"nike.com",dir:"walks/nike/",when:"November 2026",pages:29,score:57,stamp:"No",hl:"A great storefront, a leaky stockroom.",pieces:["map","walk","audit"]},
 {n:"Walk 01",site:"braze.com",dir:"walks/braze/",when:"October 2026",pages:25,score:59,stamp:"Maybe",hl:"Strong product story, leaky front door.",pieces:["map","walk","audit"]}
 ];
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const lab={map:"The map",walk:"The walk",audit:"The audit"};
-document.getElementById("walks").innerHTML=WALKS.map(w=>`<article class="walk"><span class="n">${esc(w.n)}</span><div><a class="site" href="${w.dir}audit.html">${esc(w.site)}<span>.</span></a><div class="meta">${esc(w.when)} · ${w.pages} pages · buyer lens · site score ${w.score}</div><p class="hl">${esc(w.hl)}</p><div class="pieces">${w.pieces.map(p=>`<a href="${w.dir}${p}.html">${lab[p]}</a>`).join("")}</div></div><div class="stamp st-${w.stamp.toLowerCase()}"><div class="big">${w.stamp}</div><small>${w.score}</small></div></article>`).join("");
+document.getElementById("walks").innerHTML=WALKS.map(w=>`<article class="walk"><span class="n">${esc(w.n)}</span><div><a class="site" href="${w.dir}audit.html">${esc(w.site)}<span>.</span></a><div class="meta">${esc(w.when)} · ${w.pages} ${w.unit||"pages"} · buyer lens · site score ${w.score}</div><p class="hl">${esc(w.hl)}</p><div class="pieces">${w.pieces.map(p=>`<a href="${w.dir}${p}.html">${lab[p]}</a>`).join("")}</div></div><div class="stamp st-${w.stamp.toLowerCase()}"><div class="big">${w.stamp}</div><small>${w.score}</small></div></article>`).join("");
 }
 </script>
 </body></html>
